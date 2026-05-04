@@ -1,23 +1,19 @@
 "use client"
 
-import { useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import type { SecuritySubsection } from "@/components/sidebar"
 import { usePathname } from "next/navigation"
+import { handleNav } from "@/lib/navigate"
 
-export default function SecurityLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function SecurityLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const getActiveSubsection = (): SecuritySubsection => {
     if (pathname.includes("/introduction")) return "security-intro"
     if (pathname.includes("/guardrails")) return "security-guardrails"
+    if (pathname.includes("/agent-security")) return "security-agent"
     if (pathname.includes("/principles")) return "security-principles"
     if (pathname.includes("/owasp")) return "security-owasp"
-    if (pathname.includes("/agent-security")) return "security-agent"
     return "security-intro"
   }
 
@@ -26,21 +22,8 @@ export default function SecurityLayout({
       <Sidebar
         activeSection="security"
         activeSubsection={getActiveSubsection()}
-        onSectionChange={(section, subsection) => {
-          if (subsection === "security-intro") {
-            window.location.href = "/security/introduction"
-          } else if (subsection === "security-guardrails") {
-            window.location.href = "/security/guardrails"
-          } else if (subsection === "security-agent") {
-            window.location.href = "/security/agent-security"
-          } else if (subsection === "security-principles") {
-            window.location.href = "/security/principles"
-          } else if (subsection === "security-owasp") {
-            window.location.href = "/security/owasp"
-          }
-        }}
+        onSectionChange={handleNav}
       />
-
       <main className="flex-1 overflow-auto">
         <div className="p-8 max-w-4xl">{children}</div>
       </main>

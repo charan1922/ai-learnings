@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Sidebar, SidebarTopic, SecuritySubsection } from "@/components/sidebar"
 import { Button } from "@/components/ui/button"
+import { handleNav } from "@/lib/navigate"
 
 const owasp10 = [
   {
@@ -145,42 +146,18 @@ const contentSections = {
 }
 
 export default function Page() {
-  const [activeSection, setActiveSection] = useState<SidebarTopic>("security")
-  const [activeSubsection, setActiveSubsection] =
-    useState<SecuritySubsection>("security-intro")
+  const [activeSection] = useState<SidebarTopic>("security")
+  const [activeSubsection] = useState<SecuritySubsection>("security-intro")
 
   const content = contentSections[activeSection]
   const isSecuritySection = activeSection === "security"
-
-  const handleSectionChange = (
-    section: SidebarTopic,
-    subsection?: SecuritySubsection
-  ) => {
-    if (section === "security") {
-      const target = subsection === "security-guardrails"
-        ? "/security/guardrails"
-        : subsection === "security-agent"
-        ? "/security/agent-security"
-        : subsection === "security-principles"
-        ? "/security/principles"
-        : subsection === "security-owasp"
-        ? "/security/owasp"
-        : "/security/introduction"
-      window.location.href = target
-    } else if (section === "vector-db") {
-      window.location.href = "/vector-db"
-    } else {
-      setActiveSection(section)
-      if (subsection) setActiveSubsection(subsection)
-    }
-  }
 
   return (
     <div className="flex min-h-svh bg-background">
       <Sidebar
         activeSection={activeSection}
         activeSubsection={activeSubsection}
-        onSectionChange={handleSectionChange}
+        onSectionChange={handleNav}
       />
 
       <main className="flex-1 overflow-auto">
