@@ -167,6 +167,8 @@ export default function Page() {
         ? "/security/owasp"
         : "/security/introduction"
       window.location.href = target
+    } else if (section === "vector-db") {
+      window.location.href = "/vector-db"
     } else {
       setActiveSection(section)
       if (subsection) setActiveSubsection(subsection)
