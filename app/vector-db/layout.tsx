@@ -3,6 +3,7 @@
 import { Sidebar } from "@/components/sidebar"
 import { handleNav } from "@/lib/navigate"
 import { usePathname } from "next/navigation"
+import { AzureOpenAI , Azure } from "openai" 
 
 export default function VectorDbLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
