@@ -26,39 +26,29 @@ export type SecuritySubsection =
   | "security-principles"
   | "security-owasp"
 
+export type VectorDbSubsection =
+  | "vector-db-intro"
+  | "vector-db-considerations"
+
 interface SidebarProps {
   activeSection?: SidebarTopic
-  activeSubsection?: SecuritySubsection
-  onSectionChange?: (section: SidebarTopic, subsection?: SecuritySubsection) => void
+  activeSubsection?: string
+  onSectionChange?: (section: SidebarTopic, subsection?: string) => void
 }
 
-const securitySubItems = [
-  {
-    id: "security-intro",
-    label: "Introduction",
-    description: "4-Stage Lifecycle Framework",
-  },
-  {
-    id: "security-guardrails",
-    label: "Guardrails",
-    description: "Content Safety & Controls",
-  },
-  {
-    id: "security-agent",
-    label: "Agent Security",
-    description: "Risks & Mitigations",
-  },
-  {
-    id: "security-principles",
-    label: "AI Principles",
-    description: "Fairness, Safety, Privacy...",
-  },
-  {
-    id: "security-owasp",
-    label: "OWASP Top 10",
-    description: "LLM Security Vulnerabilities",
-  },
-]
+const subItems: Record<string, { id: string; label: string; description: string }[]> = {
+  security: [
+    { id: "security-intro",       label: "Introduction",   description: "4-Stage Lifecycle Framework" },
+    { id: "security-guardrails",  label: "Guardrails",     description: "Content Safety & Controls" },
+    { id: "security-agent",       label: "Agent Security", description: "Risks & Mitigations" },
+    { id: "security-principles",  label: "AI Principles",  description: "Fairness, Safety, Privacy..." },
+    { id: "security-owasp",       label: "OWASP Top 10",   description: "LLM Security Vulnerabilities" },
+  ],
+  "vector-db": [
+    { id: "vector-db-intro",          label: "Introduction",      description: "Problem, Solution & RAG Flow" },
+    { id: "vector-db-considerations", label: "What to Consider",  description: "Security & Optimization" },
+  ],
+}
 
 const topics = [
   {
@@ -75,6 +65,7 @@ const topics = [
     description: "Storage & Retrieval",
     icon: Database,
     color: "text-blue-500",
+    hasSubItems: true,
   },
   {
     id: "embeddings",
@@ -99,24 +90,14 @@ const topics = [
   },
 ] as const
 
-export function Sidebar({
-  activeSection,
-  activeSubsection,
-  onSectionChange,
-}: SidebarProps) {
-  const [expandedItem, setExpandedItem] = useState<string | null>(
-    activeSection || null
-  )
+export function Sidebar({ activeSection, activeSubsection, onSectionChange }: SidebarProps) {
+  const [expandedItem, setExpandedItem] = useState<string | null>(activeSection || null)
 
   return (
     <aside className="w-64 border-r border-border bg-muted/40 p-6 sticky top-0 h-screen overflow-y-auto">
       <div className="mb-8">
-        <h2 className="text-lg font-semibold tracking-tight">
-          AI/RAG Concepts
-        </h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          Presentation & Learning Guide
-        </p>
+        <h2 className="text-lg font-semibold tracking-tight">AI/RAG Concepts</h2>
+        <p className="text-xs text-muted-foreground mt-1">Presentation & Learning Guide</p>
       </div>
 
       <nav className="space-y-2">
@@ -125,6 +106,7 @@ export function Sidebar({
           const isExpanded = expandedItem === topic.id
           const isActive = activeSection === topic.id
           const hasSubItems = "hasSubItems" in topic && topic.hasSubItems
+          const items = subItems[topic.id] ?? []
 
           return (
             <div key={topic.id}>
@@ -147,53 +129,36 @@ export function Sidebar({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon
-                      className={cn("h-5 w-5 flex-shrink-0", topic.color)}
-                    />
+                    <Icon className={cn("h-5 w-5 flex-shrink-0", topic.color)} />
                     <div className="min-w-0">
                       <div className="font-medium text-sm">{topic.label}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {topic.description}
-                      </div>
+                      <div className="text-xs text-muted-foreground">{topic.description}</div>
                     </div>
                   </div>
                   {hasSubItems && (
                     <div className="flex-shrink-0">
-                      {isExpanded ? (
-                        <ChevronDown className="h-4 w-4 transition-transform" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4 transition-transform" />
-                      )}
+                      {isExpanded
+                        ? <ChevronDown className="h-4 w-4 transition-transform" />
+                        : <ChevronRight className="h-4 w-4 transition-transform" />}
                     </div>
                   )}
                 </div>
               </button>
 
-              {/* Sub-items for Security */}
               {hasSubItems && isExpanded && (
                 <div className="ml-4 mt-1 space-y-1 border-l border-border/50 pl-2">
-                  {securitySubItems.map((subItem) => (
+                  {items.map((item) => (
                     <button
-                      key={subItem.id}
-                      onClick={() => {
-                        onSectionChange?.(
-                          topic.id as SidebarTopic,
-                          subItem.id as SecuritySubsection
-                        )
-                      }}
+                      key={item.id}
+                      onClick={() => onSectionChange?.(topic.id as SidebarTopic, item.id)}
                       className={cn(
                         "w-full text-left px-3 py-2 rounded text-sm transition-colors",
                         "hover:bg-accent/50 hover:text-accent-foreground",
-                        activeSubsection === subItem.id &&
-                          "bg-accent text-accent-foreground font-medium"
+                        activeSubsection === item.id && "bg-accent text-accent-foreground font-medium"
                       )}
                     >
-                      <div className="font-medium text-xs text-blue-600 dark:text-blue-400 mb-0.5">
-                        {subItem.label}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {subItem.description}
-                      </div>
+                      <div className="font-medium text-xs text-blue-600 dark:text-blue-400 mb-0.5">{item.label}</div>
+                      <div className="text-xs text-muted-foreground">{item.description}</div>
                     </button>
                   ))}
                 </div>
@@ -205,8 +170,7 @@ export function Sidebar({
 
       <div className="mt-8 pt-6 border-t border-border">
         <p className="text-xs text-muted-foreground font-medium">
-          Use this sidebar to navigate through key concepts and explain each
-          topic to your team.
+          Use this sidebar to navigate through key concepts and explain each topic to your team.
         </p>
       </div>
     </aside>
