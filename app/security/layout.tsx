@@ -17,6 +17,7 @@ export default function SecurityLayout({
     if (pathname.includes("/guardrails")) return "security-guardrails"
     if (pathname.includes("/principles")) return "security-principles"
     if (pathname.includes("/owasp")) return "security-owasp"
+    if (pathname.includes("/agent-security")) return "security-agent"
     return "security-intro"
   }
 
@@ -34,6 +35,8 @@ export default function SecurityLayout({
             window.location.href = "/security/principles"
           } else if (subsection === "security-owasp") {
             window.location.href = "/security/owasp"
+          } else if (subsection === "security-agent") {
+            window.location.href = "/security/agent-security"
           }
         }}
       />

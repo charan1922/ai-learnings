@@ -24,6 +24,7 @@ export type SecuritySubsection =
   | "security-guardrails"
   | "security-principles"
   | "security-owasp"
+  | "security-agent"
 
 interface SidebarProps {
   activeSection?: SidebarTopic
@@ -51,6 +52,11 @@ const securitySubItems = [
     id: "security-owasp",
     label: "OWASP Top 10",
     description: "LLM Security Vulnerabilities",
+  },
+  {
+    id: "security-agent",
+    label: "Agent Security",
+    description: "Risks & Mitigations",
   },
 ]
 
