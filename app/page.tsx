@@ -184,7 +184,8 @@ export default function Page() {
             <div className="space-y-8">
               {/* Introduction Section */}
               {activeSubsection === "security-intro" && (
-                <>
+                <div className="space-y-6">
+                  {/* Definition */}
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-blue-800/50 rounded-xl p-8">
                     <div className="space-y-4">
                       <div>
@@ -209,12 +210,125 @@ export default function Page() {
                     </div>
                   </div>
 
+                  {/* 4-Stage Framework */}
+                  <div>
+                    <h2 className="text-2xl font-bold mb-4">4-Stage Responsible AI Lifecycle</h2>
+
+                    {/* Stage 1: Map */}
+                    <div className="space-y-4 mb-6 border-l-4 border-blue-500 pl-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2">
+                          1️⃣ Map Potential Harms (Risk Identification)
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Identify risks across three dimensions:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded border border-blue-200/50">
+                            <p className="font-semibold text-sm mb-1">🔓 Security Risks</p>
+                            <ul className="text-xs space-y-1 text-muted-foreground">
+                              <li>• Prompt injection attacks</li>
+                              <li>• Data leakage</li>
+                              <li>• Jailbreak attempts</li>
+                            </ul>
+                          </div>
+                          <div className="bg-purple-50 dark:bg-purple-950/30 p-3 rounded border border-purple-200/50">
+                            <p className="font-semibold text-sm mb-1">🤖 AI Risks</p>
+                            <ul className="text-xs space-y-1 text-muted-foreground">
+                              <li>• Hallucinations</li>
+                              <li>• Bias in responses</li>
+                              <li>• Toxic content</li>
+                            </ul>
+                          </div>
+                          <div className="bg-amber-50 dark:bg-amber-950/30 p-3 rounded border border-amber-200/50">
+                            <p className="font-semibold text-sm mb-1">📊 Business Risks</p>
+                            <ul className="text-xs space-y-1 text-muted-foreground">
+                              <li>• Wrong decisions</li>
+                              <li>• Compliance issues</li>
+                              <li>• Legal liability</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stage 2: Measure */}
+                    <div className="space-y-4 mb-6 border-l-4 border-purple-500 pl-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-purple-600 dark:text-purple-400 mb-2">
+                          2️⃣ Measure Harms (Evaluation Layer)
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Evaluate using automated and manual testing:
+                        </p>
+                        <div className="bg-purple-50 dark:bg-purple-950/30 p-4 rounded border border-purple-200/50">
+                          <ul className="text-sm space-y-2">
+                            <li>✓ <strong>Red Teaming:</strong> Simulate attacks and jailbreaks</li>
+                            <li>✓ <strong>Metrics:</strong> Toxicity score, hallucination rate, bias detection</li>
+                            <li>✓ <strong>Tools:</strong> Content safety APIs, custom evaluation pipelines</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stage 3: Mitigate */}
+                    <div className="space-y-4 mb-6 border-l-4 border-green-500 pl-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">
+                          3️⃣ Mitigate Harms (Defense-in-Depth)
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Multi-layer protection:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
+                            <p className="font-semibold text-sm mb-2">🔐 Input Layer</p>
+                            <p className="text-xs text-muted-foreground">Validation, block malicious prompts, rate limiting</p>
+                          </div>
+                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
+                            <p className="font-semibold text-sm mb-2">🧠 Model Layer</p>
+                            <p className="text-xs text-muted-foreground">System prompts, fine-tuning, RAG</p>
+                          </div>
+                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
+                            <p className="font-semibold text-sm mb-2">📚 Data Layer</p>
+                            <p className="text-xs text-muted-foreground">RAG with trusted sources, reduce hallucination</p>
+                          </div>
+                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
+                            <p className="font-semibold text-sm mb-2">📤 Output Layer</p>
+                            <p className="text-xs text-muted-foreground">Toxicity filtering, response validation, safe responses</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stage 4: Manage */}
+                    <div className="space-y-4 border-l-4 border-red-500 pl-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
+                          4️⃣ Manage Responsibly (Deployment & Monitoring)
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Ensure safe production usage:
+                        </p>
+                        <div className="bg-red-50 dark:bg-red-950/30 p-4 rounded border border-red-200/50">
+                          <ul className="text-sm space-y-2">
+                            <li>📊 <strong>Monitoring:</strong> Track unsafe outputs, detect anomalies</li>
+                            <li>📝 <strong>Logging:</strong> Audit all prompts and responses</li>
+                            <li>👤 <strong>Human-in-Loop:</strong> Critical decisions require approval</li>
+                            <li>⚡ <strong>Fallback:</strong> Block or provide safe alternative responses</li>
+                            <li>💬 <strong>Transparency:</strong> Show disclaimers and limitations</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-800/50 rounded-lg p-4">
                     <p className="text-sm text-muted-foreground">
-                      <strong>💡 Key Focus:</strong> Responsible AI is the foundation for building systems that are not just capable, but trustworthy. This guides everything from security practices to ethical decision-making.
+                      <strong>💼 For Interviews:</strong> This framework demonstrates enterprise-grade AI governance. Use it to explain how you implement guardrails, mitigate risks, handle bias, and ensure responsible deployment in production systems.
                     </p>
                   </div>
-                </>
+                </div>
               )}
 
               {/* OWASP Top 10 Section */}
