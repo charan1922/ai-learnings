@@ -69,7 +69,7 @@ export default function VectorDbPage() {
 
         {/* RAG1 Image Slot */}
         <div className="rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden bg-blue-50/40 dark:bg-blue-950/20">
-          <RagImage src="/rag1.png" alt="RAG Pipeline Flow Diagram" className="w-full object-contain max-h-80" />
+          <RagImage src="/rag1.png" alt="RAG Pipeline Flow Diagram" className="w-full object-contain max-h-[500px]" />
           <div className="p-6 space-y-2 font-mono text-sm">
             {[
               { step: "User Query", color: "text-blue-600 dark:text-blue-400", icon: "👤" },
@@ -97,20 +97,20 @@ export default function VectorDbPage() {
         </div>
       </section>
 
-      {/* Slide 4 — What You Built */}
+      {/* Slide 4 — Ingestion Pipeline */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-purple-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
-          <h2 className="text-xl font-bold">What We Built</h2>
+          <h2 className="text-xl font-bold">Ingestion Pipeline</h2>
         </div>
         <div className="bg-purple-50/60 dark:bg-purple-950/20 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6 space-y-5">
           <p className="text-base font-semibold">
-            "We built a retrieval pipeline around vector search."
+            "A retrieval pipeline built around vector search."
           </p>
 
           {/* RAG2 Image Slot */}
           <div className="rounded-xl border border-purple-200 dark:border-purple-800 overflow-hidden bg-background">
-            <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline Diagram" className="w-full object-contain max-h-72" />
+            <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline Diagram" className="w-full object-contain max-h-[500px]" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -131,7 +131,7 @@ export default function VectorDbPage() {
           </div>
           <div className="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
             <p className="text-sm font-medium text-center text-purple-800 dark:text-purple-200">
-              "We tuned chunking and retrieval to improve answer quality."
+              "Chunking strategy and retrieval tuning directly impact answer quality."
             </p>
           </div>
         </div>
