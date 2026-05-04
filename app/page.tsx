@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Sidebar, SidebarTopic, SecuritySubsection } from "@/components/sidebar"
 import { Button } from "@/components/ui/button"
-import { AlertCircle, Shield } from "lucide-react"
 
 const owasp10 = [
   {
@@ -275,27 +274,76 @@ export default function Page() {
                     <div className="space-y-4 mb-6 border-l-4 border-green-500 pl-4">
                       <div>
                         <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-2">
-                          3️⃣ Mitigate Harms (Defense-in-Depth)
+                          3️⃣ Mitigate Harms (4-Layer Defense Strategy)
                         </h3>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          Multi-layer protection:
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Apply mitigation techniques at each layer of your AI solution:
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
-                            <p className="font-semibold text-sm mb-2">🔐 Input Layer</p>
-                            <p className="text-xs text-muted-foreground">Validation, block malicious prompts, rate limiting</p>
+
+                        {/* Layer 1: Model */}
+                        <div className="space-y-3 mb-4">
+                          <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded border border-green-200/50">
+                            <div className="flex gap-2 mb-2">
+                              <span className="text-lg">🤖</span>
+                              <div>
+                                <p className="font-semibold text-sm">Layer 1: Model Selection & Fine-tuning</p>
+                              </div>
+                            </div>
+                            <ul className="text-xs space-y-1 text-muted-foreground pl-6">
+                              <li>• <strong>Model Selection:</strong> Choose models appropriate for your use case (e.g., simpler models for classification reduce harm risk)</li>
+                              <li>• <strong>Fine-tuning:</strong> Train on your domain data to produce more relevant, scoped responses</li>
+                            </ul>
                           </div>
-                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
-                            <p className="font-semibold text-sm mb-2">🧠 Model Layer</p>
-                            <p className="text-xs text-muted-foreground">System prompts, fine-tuning, RAG</p>
+                        </div>
+
+                        {/* Layer 2: Safety System */}
+                        <div className="space-y-3 mb-4">
+                          <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded border border-green-200/50">
+                            <div className="flex gap-2 mb-2">
+                              <span className="text-lg">🛡️</span>
+                              <div>
+                                <p className="font-semibold text-sm">Layer 2: Safety System & Guardrails</p>
+                              </div>
+                            </div>
+                            <ul className="text-xs space-y-1 text-muted-foreground pl-6">
+                              <li>• <strong>Content Filters:</strong> Classify content by severity (safe, low, medium, high) across 5 harm categories</li>
+                              <li>• <strong>Guardrails:</strong> Suppress prompts/responses based on harm classification</li>
+                              <li>• <strong>Prompt Shields:</strong> Detect systematic abuse attempts & jailbreak patterns</li>
+                            </ul>
                           </div>
-                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
-                            <p className="font-semibold text-sm mb-2">📚 Data Layer</p>
-                            <p className="text-xs text-muted-foreground">RAG with trusted sources, reduce hallucination</p>
+                        </div>
+
+                        {/* Layer 3: System Message & Grounding */}
+                        <div className="space-y-3 mb-4">
+                          <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded border border-green-200/50">
+                            <div className="flex gap-2 mb-2">
+                              <span className="text-lg">💬</span>
+                              <div>
+                                <p className="font-semibold text-sm">Layer 3: System Message & Grounding</p>
+                              </div>
+                            </div>
+                            <ul className="text-xs space-y-1 text-muted-foreground pl-6">
+                              <li>• <strong>System Prompts:</strong> Define behavioral parameters & boundaries for the model</li>
+                              <li>• <strong>Prompt Engineering:</strong> Structure inputs to minimize harmful outputs</li>
+                              <li>• <strong>RAG (Retrieval-Augmented Generation):</strong> Ground responses in trusted data sources to reduce hallucination</li>
+                            </ul>
                           </div>
-                          <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded border border-green-200/50">
-                            <p className="font-semibold text-sm mb-2">📤 Output Layer</p>
-                            <p className="text-xs text-muted-foreground">Toxicity filtering, response validation, safe responses</p>
+                        </div>
+
+                        {/* Layer 4: User Experience */}
+                        <div className="space-y-3">
+                          <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded border border-green-200/50">
+                            <div className="flex gap-2 mb-2">
+                              <span className="text-lg">👤</span>
+                              <div>
+                                <p className="font-semibold text-sm">Layer 4: User Experience & Transparency</p>
+                              </div>
+                            </div>
+                            <ul className="text-xs space-y-1 text-muted-foreground pl-6">
+                              <li>• <strong>Input Constraints:</strong> Restrict user inputs to specific subjects/types via UI design</li>
+                              <li>• <strong>Input/Output Validation:</strong> Validate and sanitize data at application boundaries</li>
+                              <li>• <strong>Documentation:</strong> Be transparent about system capabilities, limitations, and remaining risks</li>
+                            </ul>
                           </div>
                         </div>
                       </div>
@@ -326,6 +374,45 @@ export default function Page() {
                   <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-800/50 rounded-lg p-4">
                     <p className="text-sm text-muted-foreground">
                       <strong>💼 For Interviews:</strong> This framework demonstrates enterprise-grade AI governance. Use it to explain how you implement guardrails, mitigate risks, handle bias, and ensure responsible deployment in production systems.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+
+              {/* AI Principles Section */}
+              {activeSubsection === "security-principles" && (
+                <div className="space-y-6">
+                  <div className="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-4">
+                    <p className="text-sm">
+                      <strong>Six Core Principles</strong> that should guide AI development and use across all applications and use cases.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {aiPrinciples.map((principle) => (
+                      <div
+                        key={principle.title}
+                        className={`bg-gradient-to-br ${principle.color} border border-border rounded-lg p-5`}
+                      >
+                        <h3 className="font-semibold text-base mb-1">
+                          {principle.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          {principle.description}
+                        </p>
+                        <div className="bg-background/50 rounded p-2 border border-border">
+                          <p className="text-xs text-muted-foreground italic">
+                            {principle.question}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>💡 Discussion Point:</strong> Use these principles to evaluate your AI systems. How does each principle help mitigate the OWASP vulnerabilities?
                     </p>
                   </div>
                 </div>
@@ -368,44 +455,6 @@ export default function Page() {
                   <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
                     <p className="text-sm text-muted-foreground">
                       <strong>💡 Presentation Tip:</strong> Walk through each vulnerability and discuss how your organization is addressing them through secure coding practices, input validation, and output monitoring.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* AI Principles Section */}
-              {activeSubsection === "security-principles" && (
-                <div className="space-y-6">
-                  <div className="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-4">
-                    <p className="text-sm">
-                      <strong>Six Core Principles</strong> that should guide AI development and use across all applications and use cases.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {aiPrinciples.map((principle) => (
-                      <div
-                        key={principle.title}
-                        className={`bg-gradient-to-br ${principle.color} border border-border rounded-lg p-5`}
-                      >
-                        <h3 className="font-semibold text-base mb-1">
-                          {principle.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {principle.description}
-                        </p>
-                        <div className="bg-background/50 rounded p-2 border border-border">
-                          <p className="text-xs text-muted-foreground italic">
-                            {principle.question}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>💡 Discussion Point:</strong> Use these principles to evaluate your AI systems. How does each principle help mitigate the OWASP vulnerabilities? What trade-offs exist between them?
                     </p>
                   </div>
                 </div>

@@ -21,8 +21,8 @@ export type SidebarTopic =
 
 export type SecuritySubsection =
   | "security-intro"
-  | "security-owasp"
   | "security-principles"
+  | "security-owasp"
 
 interface SidebarProps {
   activeSection?: SidebarTopic
@@ -34,17 +34,17 @@ const securitySubItems = [
   {
     id: "security-intro",
     label: "Introduction",
-    description: "What is Responsible AI?",
-  },
-  {
-    id: "security-owasp",
-    label: "OWASP Top 10",
-    description: "LLM Security Vulnerabilities",
+    description: "4-Stage Lifecycle Framework",
   },
   {
     id: "security-principles",
     label: "AI Principles",
     description: "Fairness, Safety, Privacy...",
+  },
+  {
+    id: "security-owasp",
+    label: "OWASP Top 10",
+    description: "LLM Security Vulnerabilities",
   },
 ]
 
