@@ -1,3 +1,5 @@
+import { RagImage } from "@/components/rag-image"
+
 export default function VectorDbPage() {
   return (
     <div className="space-y-12">
@@ -67,12 +69,7 @@ export default function VectorDbPage() {
 
         {/* RAG1 Image Slot */}
         <div className="rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden bg-blue-50/40 dark:bg-blue-950/20">
-          <img
-            src="/rag1.png"
-            alt="RAG Pipeline Flow Diagram"
-            className="w-full object-contain max-h-80"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-          />
+          <RagImage src="/rag1.png" alt="RAG Pipeline Flow Diagram" className="w-full object-contain max-h-80" />
           <div className="p-6 space-y-2 font-mono text-sm">
             {[
               { step: "User Query", color: "text-blue-600 dark:text-blue-400", icon: "👤" },
@@ -113,12 +110,7 @@ export default function VectorDbPage() {
 
           {/* RAG2 Image Slot */}
           <div className="rounded-xl border border-purple-200 dark:border-purple-800 overflow-hidden bg-background">
-            <img
-              src="/rag2.png"
-              alt="RAG Ingestion Pipeline Diagram"
-              className="w-full object-contain max-h-72"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-            />
+            <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline Diagram" className="w-full object-contain max-h-72" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
