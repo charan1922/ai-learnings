@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sidebar, SidebarTopic } from "@/components/sidebar"
+import { Sidebar, SidebarTopic, SecuritySubsection } from "@/components/sidebar"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, Shield } from "lucide-react"
 
@@ -101,6 +101,7 @@ const contentSections = {
   security: {
     title: "Security & Responsible AI",
     subtitle: "OWASP Top 10 for LLMs & AI Principles",
+    topics: [],
   },
   "vector-db": {
     title: "Vector Databases",
@@ -146,14 +147,29 @@ const contentSections = {
 
 export default function Page() {
   const [activeSection, setActiveSection] = useState<SidebarTopic>("security")
-  const [showPrinciples, setShowPrinciples] = useState(false)
+  const [activeSubsection, setActiveSubsection] =
+    useState<SecuritySubsection>("security-intro")
 
   const content = contentSections[activeSection]
   const isSecuritySection = activeSection === "security"
 
+  const handleSectionChange = (
+    section: SidebarTopic,
+    subsection?: SecuritySubsection
+  ) => {
+    setActiveSection(section)
+    if (section === "security" && subsection) {
+      setActiveSubsection(subsection)
+    }
+  }
+
   return (
     <div className="flex min-h-svh bg-background">
-      <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+      <Sidebar
+        activeSection={activeSection}
+        activeSubsection={activeSubsection}
+        onSectionChange={handleSectionChange}
+      />
 
       <main className="flex-1 overflow-auto">
         <div className="p-8 max-w-6xl">
@@ -166,54 +182,50 @@ export default function Page() {
 
           {isSecuritySection ? (
             <div className="space-y-8">
-              {/* Responsible AI Definition */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-blue-800/50 rounded-xl p-8">
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-3">
-                      What is Responsible AI?
-                    </h2>
-                    <p className="text-lg text-blue-800 dark:text-blue-200 leading-relaxed">
-                      Responsible AI refers to designing, developing, and using artificial intelligence in ways that are <strong>ethical, transparent, fair, and aligned with human values</strong>. It's a concept that focuses not just on what AI can do, but what it <strong>should</strong> do.
+              {/* Introduction Section */}
+              {activeSubsection === "security-intro" && (
+                <>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-blue-800/50 rounded-xl p-8">
+                    <div className="space-y-4">
+                      <div>
+                        <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-3">
+                          What is Responsible AI?
+                        </h2>
+                        <p className="text-lg text-blue-800 dark:text-blue-200 leading-relaxed">
+                          Responsible AI refers to designing, developing, and using artificial intelligence in ways that are <strong>ethical, transparent, fair, and aligned with human values</strong>. It's a concept that focuses not just on what AI can do, but what it <strong>should</strong> do.
+                        </p>
+                      </div>
+
+                      <div className="border-t border-blue-200 dark:border-blue-700 pt-4">
+                        <div className="bg-white dark:bg-blue-950/60 rounded-lg p-4 border border-blue-200 dark:border-blue-700/50">
+                          <p className="text-base font-semibold text-blue-900 dark:text-blue-100">
+                            In simple terms:
+                          </p>
+                          <p className="text-lg mt-2 text-blue-800 dark:text-blue-200 font-semibold">
+                            ✨ Responsible AI means building and using AI systems that people can trust.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-800/50 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>💡 Key Focus:</strong> Responsible AI is the foundation for building systems that are not just capable, but trustworthy. This guides everything from security practices to ethical decision-making.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {/* OWASP Top 10 Section */}
+              {activeSubsection === "security-owasp" && (
+                <div className="space-y-6">
+                  <div className="bg-red-50/50 dark:bg-red-950/20 border border-red-200/50 dark:border-red-800/50 rounded-lg p-4">
+                    <p className="text-sm">
+                      <strong>OWASP Top 10 for Large Language Models</strong> outlines the most critical security vulnerabilities specific to generative AI systems. Understanding these is essential for designing guardrails and safety measures.
                     </p>
                   </div>
 
-                  <div className="border-t border-blue-200 dark:border-blue-700 pt-4">
-                    <div className="bg-white dark:bg-blue-950/60 rounded-lg p-4 border border-blue-200 dark:border-blue-700/50">
-                      <p className="text-base font-semibold text-blue-900 dark:text-blue-100">
-                        In simple terms:
-                      </p>
-                      <p className="text-lg mt-2 text-blue-800 dark:text-blue-200 font-semibold">
-                        ✨ Responsible AI means building and using AI systems that people can trust.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Toggle Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  variant={!showPrinciples ? "default" : "outline"}
-                  onClick={() => setShowPrinciples(false)}
-                  className="gap-2"
-                >
-                  <AlertCircle className="w-4 h-4" />
-                  OWASP Top 10 for LLMs
-                </Button>
-                <Button
-                  variant={showPrinciples ? "default" : "outline"}
-                  onClick={() => setShowPrinciples(true)}
-                  className="gap-2"
-                >
-                  <Shield className="w-4 h-4" />
-                  AI Principles
-                </Button>
-              </div>
-
-              {/* OWASP Top 10 */}
-              {!showPrinciples && (
-                <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {owasp10.map((item) => (
                       <div
@@ -238,12 +250,24 @@ export default function Page() {
                       </div>
                     ))}
                   </div>
+
+                  <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>💡 Presentation Tip:</strong> Walk through each vulnerability and discuss how your organization is addressing them through secure coding practices, input validation, and output monitoring.
+                    </p>
+                  </div>
                 </div>
               )}
 
-              {/* AI Principles */}
-              {showPrinciples && (
-                <div className="space-y-4">
+              {/* AI Principles Section */}
+              {activeSubsection === "security-principles" && (
+                <div className="space-y-6">
+                  <div className="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-4">
+                    <p className="text-sm">
+                      <strong>Six Core Principles</strong> that should guide AI development and use across all applications and use cases.
+                    </p>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {aiPrinciples.map((principle) => (
                       <div
@@ -264,14 +288,14 @@ export default function Page() {
                       </div>
                     ))}
                   </div>
+
+                  <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>💡 Discussion Point:</strong> Use these principles to evaluate your AI systems. How does each principle help mitigate the OWASP vulnerabilities? What trade-offs exist between them?
+                    </p>
+                  </div>
                 </div>
               )}
-
-              <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4 mt-8">
-                <p className="text-sm text-muted-foreground">
-                  <strong>💡 Presentation Tip:</strong> Use these OWASP vulnerabilities and AI principles to demonstrate your team's understanding of responsible AI development. Discuss how each principle can mitigate the identified vulnerabilities.
-                </p>
-              </div>
             </div>
           ) : (
             <div className="space-y-6">

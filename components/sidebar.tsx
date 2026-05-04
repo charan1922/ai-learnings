@@ -8,6 +8,7 @@ import {
   Scissors,
   GitBranch,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -18,10 +19,34 @@ export type SidebarTopic =
   | "chunking"
   | "graph-rag"
 
+export type SecuritySubsection =
+  | "security-intro"
+  | "security-owasp"
+  | "security-principles"
+
 interface SidebarProps {
   activeSection?: SidebarTopic
-  onSectionChange?: (section: SidebarTopic) => void
+  activeSubsection?: SecuritySubsection
+  onSectionChange?: (section: SidebarTopic, subsection?: SecuritySubsection) => void
 }
+
+const securitySubItems = [
+  {
+    id: "security-intro",
+    label: "Introduction",
+    description: "What is Responsible AI?",
+  },
+  {
+    id: "security-owasp",
+    label: "OWASP Top 10",
+    description: "LLM Security Vulnerabilities",
+  },
+  {
+    id: "security-principles",
+    label: "AI Principles",
+    description: "Fairness, Safety, Privacy...",
+  },
+]
 
 const topics = [
   {
@@ -30,6 +55,7 @@ const topics = [
     description: "Guardrails & Safety",
     icon: Shield,
     color: "text-red-500",
+    hasSubItems: true,
   },
   {
     id: "vector-db",
@@ -61,8 +87,12 @@ const topics = [
   },
 ] as const
 
-export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
-  const [expandedItem, setExpandedItem] = useState<SidebarTopic | null>(
+export function Sidebar({
+  activeSection,
+  activeSubsection,
+  onSectionChange,
+}: SidebarProps) {
+  const [expandedItem, setExpandedItem] = useState<string | null>(
     activeSection || null
   )
 
@@ -80,38 +110,80 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
       <nav className="space-y-2">
         {topics.map((topic) => {
           const Icon = topic.icon
-          const isActive = expandedItem === topic.id
+          const isExpanded = expandedItem === topic.id
+          const hasSubItems = "hasSubItems" in topic && topic.hasSubItems
+
           return (
-            <button
-              key={topic.id}
-              onClick={() => {
-                setExpandedItem(isActive ? null : (topic.id as SidebarTopic))
-                onSectionChange?.(topic.id as SidebarTopic)
-              }}
-              className={cn(
-                "w-full text-left px-4 py-3 rounded-lg transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                isActive && "bg-accent text-accent-foreground"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Icon className={cn("h-5 w-5 flex-shrink-0", topic.color)} />
-                  <div className="min-w-0">
-                    <div className="font-medium text-sm">{topic.label}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {topic.description}
+            <div key={topic.id}>
+              <button
+                onClick={() => {
+                  if (hasSubItems) {
+                    setExpandedItem(isExpanded ? null : topic.id)
+                  } else {
+                    setExpandedItem(topic.id)
+                    onSectionChange?.(topic.id as SidebarTopic)
+                  }
+                }}
+                className={cn(
+                  "w-full text-left px-4 py-3 rounded-lg transition-colors",
+                  "hover:bg-accent hover:text-accent-foreground",
+                  isExpanded && hasSubItems && "bg-accent text-accent-foreground"
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon
+                      className={cn("h-5 w-5 flex-shrink-0", topic.color)}
+                    />
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm">{topic.label}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {topic.description}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <ChevronRight
-                  className={cn(
-                    "h-4 w-4 flex-shrink-0 transition-transform",
-                    isActive && "rotate-90"
+                  {hasSubItems && (
+                    <div className="flex-shrink-0">
+                      {isExpanded ? (
+                        <ChevronDown className="h-4 w-4 transition-transform" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 transition-transform" />
+                      )}
+                    </div>
                   )}
-                />
-              </div>
-            </button>
+                </div>
+              </button>
+
+              {/* Sub-items for Security */}
+              {hasSubItems && isExpanded && (
+                <div className="ml-4 mt-1 space-y-1 border-l border-border/50 pl-2">
+                  {securitySubItems.map((subItem) => (
+                    <button
+                      key={subItem.id}
+                      onClick={() => {
+                        onSectionChange?.(
+                          topic.id as SidebarTopic,
+                          subItem.id as SecuritySubsection
+                        )
+                      }}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded text-sm transition-colors",
+                        "hover:bg-accent/50 hover:text-accent-foreground",
+                        activeSubsection === subItem.id &&
+                          "bg-accent text-accent-foreground font-medium"
+                      )}
+                    >
+                      <div className="font-medium text-xs text-blue-600 dark:text-blue-400 mb-0.5">
+                        {subItem.label}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {subItem.description}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           )
         })}
       </nav>
