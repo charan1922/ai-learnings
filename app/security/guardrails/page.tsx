@@ -13,28 +13,58 @@ export default function GuardrailsPage() {
         </p>
       </div>
 
-      {/* Two Core Types */}
+      {/* Harm Categories */}
+      <div className="space-y-3">
+        <h2 className="text-xl font-bold">What Guardrails Detect</h2>
+        <p className="text-sm text-muted-foreground">Guardrails screen for these categories of harm across inputs, outputs, and tool calls:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {[
+            { label: "Prompt Injection", icon: "💉", desc: "Malicious instructions hidden in user input trying to hijack the model", color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800" },
+            { label: "Harmful Content", icon: "⚠️", desc: "Violence, self-harm, hate speech, sexual content, or illicit material", color: "bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800" },
+            { label: "Sensitive Data", icon: "🔒", desc: "PII, credentials, or confidential information in inputs or model outputs", color: "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800" },
+            { label: "Hallucinations", icon: "🌀", desc: "Fabricated facts, citations, or outputs not grounded in source data", color: "bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800" },
+            { label: "Protected Material", icon: "📄", desc: "Copyrighted text, licensed code, or regulated content reproduced verbatim", color: "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800" },
+          ].map(({ label, icon, desc, color }) => (
+            <div key={label} className={`${color} border rounded-lg p-4`}>
+              <p className="font-semibold text-sm mb-1">{icon} {label}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Three Types of Guardrails */}
       <div className="space-y-4">
-        <h2 className="text-xl font-bold">Two Types of Guardrails</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-xl font-bold">Three Types of Guardrails</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
           <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl p-5">
             <h3 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">🔵 Input Guardrails</h3>
             <p className="text-xs text-muted-foreground mb-3">Run before the LLM processes the request</p>
             <ul className="text-sm space-y-1">
-              <li>✓ Topical / off-topic filtering</li>
-              <li>✓ Jailbreak prevention</li>
               <li>✓ Prompt injection detection</li>
+              <li>✓ Jailbreak prevention</li>
+              <li>✓ Topical / off-topic filtering</li>
+            </ul>
+          </div>
+
+          <div className="bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800 rounded-xl p-5">
+            <h3 className="font-semibold text-violet-700 dark:text-violet-300 mb-2">🟣 Tool Guardrails</h3>
+            <p className="text-xs text-muted-foreground mb-3">Run before & after every tool/function call</p>
+            <ul className="text-sm space-y-1">
+              <li>✓ Validate tool inputs</li>
+              <li>✓ Sanitize tool outputs</li>
+              <li>✓ Prevent unauthorized actions</li>
             </ul>
           </div>
 
           <div className="bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 rounded-xl p-5">
             <h3 className="font-semibold text-orange-700 dark:text-orange-300 mb-2">🟠 Output Guardrails</h3>
-            <p className="text-xs text-muted-foreground mb-3">Run after the LLM generates a response</p>
+            <p className="text-xs text-muted-foreground mb-3">Run after the LLM generates the final response</p>
             <ul className="text-sm space-y-1">
               <li>✓ Hallucination / fact checking</li>
-              <li>✓ Toxicity & hate speech filtering</li>
-              <li>✓ PII detection & masking</li>
+              <li>✓ Harmful content filtering</li>
+              <li>✓ Sensitive data & PII masking</li>
             </ul>
           </div>
 
@@ -50,7 +80,7 @@ export default function GuardrailsPage() {
           <p className="ml-4 text-muted-foreground">↓</p>
           <div className="ml-4 flex gap-3">
             <div className="flex-1 bg-blue-50 dark:bg-blue-950/30 p-2 rounded border border-blue-200/50 text-xs">
-              <p className="font-semibold text-blue-700 dark:text-blue-300">Input Guardrail (async)</p>
+              <p className="font-semibold text-blue-700 dark:text-blue-300">Input Guardrail (parallel)</p>
               <p className="text-muted-foreground">Injection · Jailbreak · Topic</p>
             </div>
             <div className="flex-1 bg-purple-50 dark:bg-purple-950/30 p-2 rounded border border-purple-200/50 text-xs">
@@ -58,10 +88,21 @@ export default function GuardrailsPage() {
               <p className="text-muted-foreground">System prompt + generation</p>
             </div>
           </div>
+          <p className="ml-4 text-muted-foreground">↓ (if tool calls needed)</p>
+          <div className="ml-4 flex gap-3">
+            <div className="flex-1 bg-violet-50 dark:bg-violet-950/30 p-2 rounded border border-violet-200/50 text-xs">
+              <p className="font-semibold text-violet-700 dark:text-violet-300">Tool Guardrail — Input</p>
+              <p className="text-muted-foreground">Validate args before execution</p>
+            </div>
+            <div className="flex-1 bg-violet-50 dark:bg-violet-950/30 p-2 rounded border border-violet-200/50 text-xs">
+              <p className="font-semibold text-violet-700 dark:text-violet-300">Tool Guardrail — Output</p>
+              <p className="text-muted-foreground">Sanitize result before LLM sees it</p>
+            </div>
+          </div>
           <p className="ml-4 text-muted-foreground">↓</p>
           <div className="ml-4 bg-orange-50 dark:bg-orange-950/30 p-2 rounded border border-orange-200/50 text-xs">
             <p className="font-semibold text-orange-700 dark:text-orange-300">Output Guardrail</p>
-            <p className="text-muted-foreground">Toxicity · PII · Format check</p>
+            <p className="text-muted-foreground">Harmful content · Sensitive data · Hallucinations · Protected material</p>
           </div>
           <p className="ml-4 text-muted-foreground">↓</p>
           <p className="ml-4 text-green-600 dark:text-green-400">✅ Safe Response → User</p>

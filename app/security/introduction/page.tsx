@@ -123,7 +123,7 @@ export default function IntroductionPage() {
                   </div>
                 </div>
                 <ul className="text-xs space-y-1 text-muted-foreground pl-6">
-                  <li>• <strong>Content Filters:</strong> Classify content by severity (safe, low, medium, high) across 5 harm categories</li>
+                  <li>• <strong>Content Filters:</strong> Classify content by severity (safe, low, medium, high) across harm categories: prompt injection, harmful content, sensitive data, hallucinations, protected material</li>
                   <li>• <strong>Guardrails:</strong> Suppress prompts/responses based on harm classification</li>
                   <li>• <strong>Prompt Shields:</strong> Detect systematic abuse attempts & jailbreak patterns</li>
                 </ul>
