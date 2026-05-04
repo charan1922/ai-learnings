@@ -44,6 +44,11 @@ const securitySubItems = [
     description: "Content Safety & Controls",
   },
   {
+    id: "security-agent",
+    label: "Agent Security",
+    description: "Risks & Mitigations",
+  },
+  {
     id: "security-principles",
     label: "AI Principles",
     description: "Fairness, Safety, Privacy...",
@@ -52,11 +57,6 @@ const securitySubItems = [
     id: "security-owasp",
     label: "OWASP Top 10",
     description: "LLM Security Vulnerabilities",
-  },
-  {
-    id: "security-agent",
-    label: "Agent Security",
-    description: "Risks & Mitigations",
   },
 ]
 
