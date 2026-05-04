@@ -230,9 +230,91 @@ export default function GuardrailsPage() {
         </div>
       </div>
 
+      {/* OpenAI Guardrails Implementation */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold">OpenAI Guardrails SDK Implementation</h2>
+        <p className="text-sm text-muted-foreground">
+          How OpenAI's Agents SDK Guardrails maps to the 5-layer architecture:
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Input Guardrails */}
+          <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded border border-blue-200/50">
+            <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">
+              Input Guardrails
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Runs on first agent in chain. Prevents bad input reaching the LLM.
+            </p>
+            <div className="bg-background/50 p-2 rounded border border-border">
+              <p className="text-xs font-mono">
+                <strong>Maps to:</strong><br/>
+                Layer 1: Input validation<br/>
+                Layer 2: Policy enforcement
+              </p>
+            </div>
+            <ul className="text-xs space-y-1 mt-3">
+              <li>✓ Jailbreak detection</li>
+              <li>✓ Prompt injection blocking</li>
+              <li>✓ Off-topic prevention</li>
+            </ul>
+          </div>
+
+          {/* Output Guardrails */}
+          <div className="bg-orange-50 dark:bg-orange-950/30 p-4 rounded border border-orange-200/50">
+            <h3 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">
+              Output Guardrails
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Runs on final agent output. Filters before user delivery.
+            </p>
+            <div className="bg-background/50 p-2 rounded border border-border">
+              <p className="text-xs font-mono">
+                <strong>Maps to:</strong><br/>
+                Layer 4: Output filtering<br/>
+                Layer 5: Final validation
+              </p>
+            </div>
+            <ul className="text-xs space-y-1 mt-3">
+              <li>✓ Toxicity filtering</li>
+              <li>✓ PII masking</li>
+              <li>✓ Response validation</li>
+            </ul>
+          </div>
+
+          {/* Tool Guardrails */}
+          <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded border border-green-200/50">
+            <h3 className="font-semibold text-green-600 dark:text-green-400 mb-2">
+              Tool Guardrails
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Runs on every custom tool. Input & output validation per tool.
+            </p>
+            <div className="bg-background/50 p-2 rounded border border-border">
+              <p className="text-xs font-mono">
+                <strong>Maps to:</strong><br/>
+                Layer 3: Data integrity<br/>
+                Layer 4: Output safety
+              </p>
+            </div>
+            <ul className="text-xs space-y-1 mt-3">
+              <li>✓ Tool input validation</li>
+              <li>✓ Execution safety</li>
+              <li>✓ Tool output checks</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-800/50 rounded-lg p-4">
+          <p className="text-xs text-muted-foreground">
+            <strong>Key Feature:</strong> OpenAI uses an optimistic execution model where guardrails run in parallel with agent execution, raising exceptions if violations occur. This is more efficient than sequential validation.
+          </p>
+        </div>
+      </div>
+
       <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
         <p className="text-sm text-muted-foreground">
-          <strong>🎓 Interview Insight:</strong> Guardrails demonstrate you understand defense-in-depth security. Be able to explain: (1) which layer addresses which threat, (2) trade-offs between permissiveness & safety, (3) how you'd test guardrail effectiveness.
+          <strong>🎓 Interview Insight:</strong> Explain the 5-layer architecture first (shows architectural thinking), then mention OpenAI's specific implementation (shows you know current tools). Discuss: (1) which layer addresses which threat, (2) trade-offs between permissiveness & safety, (3) how to test guardrail effectiveness.
         </p>
       </div>
     </div>
