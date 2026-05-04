@@ -142,11 +142,6 @@ const contentSections = {
       "Graph-based retrieval augmentation",
     ],
   },
-  "agent-security": {
-    title: "Agent Security",
-    subtitle: "Security Considerations for AI Agents",
-    topics: [],
-  },
 }
 
 export default function Page() {
@@ -164,14 +159,14 @@ export default function Page() {
     if (section === "security") {
       const target = subsection === "security-guardrails"
         ? "/security/guardrails"
+        : subsection === "security-agent"
+        ? "/security/agent-security"
         : subsection === "security-principles"
         ? "/security/principles"
         : subsection === "security-owasp"
         ? "/security/owasp"
         : "/security/introduction"
       window.location.href = target
-    } else if (section === "agent-security") {
-      window.location.href = "/agent-security"
     } else {
       setActiveSection(section)
       if (subsection) setActiveSubsection(subsection)

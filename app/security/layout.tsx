@@ -27,12 +27,12 @@ export default function SecurityLayout({
         activeSection="security"
         activeSubsection={getActiveSubsection()}
         onSectionChange={(section, subsection) => {
-          if (section === "agent-security") {
-            window.location.href = "/agent-security"
-          } else if (subsection === "security-intro") {
+          if (subsection === "security-intro") {
             window.location.href = "/security/introduction"
           } else if (subsection === "security-guardrails") {
             window.location.href = "/security/guardrails"
+          } else if (subsection === "security-agent") {
+            window.location.href = "/security/agent-security"
           } else if (subsection === "security-principles") {
             window.location.href = "/security/principles"
           } else if (subsection === "security-owasp") {

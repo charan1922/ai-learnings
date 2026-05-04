@@ -7,7 +7,6 @@ import {
   Zap,
   Scissors,
   GitBranch,
-  Bot,
   ChevronRight,
   ChevronDown,
 } from "lucide-react"
@@ -19,11 +18,11 @@ export type SidebarTopic =
   | "embeddings"
   | "chunking"
   | "graph-rag"
-  | "agent-security"
 
 export type SecuritySubsection =
   | "security-intro"
   | "security-guardrails"
+  | "security-agent"
   | "security-principles"
   | "security-owasp"
 
@@ -45,6 +44,11 @@ const securitySubItems = [
     description: "Content Safety & Controls",
   },
   {
+    id: "security-agent",
+    label: "Agent Security",
+    description: "Risks & Mitigations",
+  },
+  {
     id: "security-principles",
     label: "AI Principles",
     description: "Fairness, Safety, Privacy...",
@@ -64,13 +68,6 @@ const topics = [
     icon: Shield,
     color: "text-red-500",
     hasSubItems: true,
-  },
-  {
-    id: "agent-security",
-    label: "Agent Security",
-    description: "Risks & Mitigations",
-    icon: Bot,
-    color: "text-slate-500",
   },
   {
     id: "vector-db",
