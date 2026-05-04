@@ -10,22 +10,22 @@ export default function VectorDbPage() {
           🗄️ VECTOR DATABASES & RAG
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Vector Databases</h1>
-        <p className="text-muted-foreground text-base">How we made the model context-aware instead of guess-based.</p>
+        <p className="text-muted-foreground text-base">How vector databases make LLMs context-aware instead of guess-based.</p>
       </div>
 
       {/* Slide 1 — Real Problem */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
-          <h2 className="text-xl font-bold">The Real Problem</h2>
+          <h2 className="text-xl font-bold">The Problem</h2>
         </div>
         <div className="bg-red-50/60 dark:bg-red-950/20 border-2 border-red-200 dark:border-red-800 rounded-2xl p-6 space-y-4">
           <p className="text-base leading-relaxed">
-            <strong>"LLMs don't know our application data. Without context, they generate generic or incorrect answers."</strong>
+            <strong>"LLMs don't know your application data. Without context, they generate generic or incorrect answers."</strong>
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
             {[
-              { icon: "🚫", label: "No Internal Data", desc: "Model has no access to your documents, databases, or domain knowledge" },
+              { icon: "🚫", label: "No Internal Data", desc: "The model has no access to your documents, databases, or domain knowledge" },
               { icon: "🌀", label: "Hallucinations", desc: "Without grounding, the model confidently fabricates plausible-sounding answers" },
               { icon: "⚠️", label: "Not Production-Ready", desc: "Generic responses can't be trusted in real-world business applications" },
             ].map(({ icon, label, desc }) => (
@@ -47,7 +47,7 @@ export default function VectorDbPage() {
         </div>
         <div className="bg-green-50/60 dark:bg-green-950/20 border-2 border-green-200 dark:border-green-800 rounded-2xl p-6 space-y-4">
           <p className="text-base leading-relaxed">
-            <strong>"We solved this using a Vector Database with a RAG pipeline to bring relevant context into the model."</strong>
+            <strong>A Vector Database combined with a RAG pipeline brings relevant context into the model at query time.</strong>
           </p>
           <div className="bg-background rounded-xl border border-green-300 dark:border-green-700 p-5 text-center">
             <p className="text-2xl font-bold text-green-700 dark:text-green-400">
@@ -67,7 +67,6 @@ export default function VectorDbPage() {
           <h2 className="text-xl font-bold">Core RAG Flow</h2>
         </div>
 
-        {/* RAG1 Image Slot */}
         <div className="rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden bg-blue-50/40 dark:bg-blue-950/20">
           <RagImage src="/rag1.png" alt="RAG Pipeline Flow Diagram" className="w-full object-contain max-h-[500px]" />
           <div className="p-6 space-y-2 font-mono text-sm">
@@ -105,10 +104,9 @@ export default function VectorDbPage() {
         </div>
         <div className="bg-purple-50/60 dark:bg-purple-950/20 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6 space-y-5">
           <p className="text-base font-semibold">
-            "A retrieval pipeline built around vector search."
+            A RAG pipeline involves preparing and indexing data before retrieval can happen.
           </p>
 
-          {/* RAG2 Image Slot */}
           <div className="rounded-xl border border-purple-200 dark:border-purple-800 overflow-hidden bg-background">
             <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline Diagram" className="w-full object-contain max-h-[500px]" />
           </div>
@@ -141,11 +139,11 @@ export default function VectorDbPage() {
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
-          <h2 className="text-xl font-bold">Security Angle</h2>
+          <h2 className="text-xl font-bold">Security Considerations</h2>
         </div>
         <div className="bg-slate-50/60 dark:bg-slate-950/20 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-6 space-y-5">
           <p className="text-base font-semibold">
-            "Vector DB introduces new risks if not controlled properly."
+            "A vector database introduces new risks if not controlled properly."
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -164,11 +162,11 @@ export default function VectorDbPage() {
             </div>
 
             <div className="space-y-3">
-              <h3 className="font-semibold text-sm text-green-600 dark:text-green-400">✅ What We Did</h3>
+              <h3 className="font-semibold text-sm text-green-600 dark:text-green-400">✅ Mitigations</h3>
               {[
                 { label: "Access Control", desc: "User-specific document access only" },
                 { label: "Metadata Filtering", desc: "Filter by user / role at query time" },
-                { label: "Trusted Data Only", desc: "Controlled ingestion — no random sources" },
+                { label: "Trusted Data Only", desc: "Controlled ingestion — no unverified sources" },
                 { label: "Sanitization", desc: "Clean and validate chunks before storing" },
               ].map(({ label, desc }) => (
                 <div key={label} className="flex gap-2 items-start bg-green-50/50 dark:bg-green-950/20 border border-green-200/50 rounded-lg px-3 py-2">
@@ -184,7 +182,7 @@ export default function VectorDbPage() {
 
           <div className="bg-slate-800 dark:bg-slate-900 text-slate-100 rounded-xl p-4 text-center border border-slate-600">
             <p className="text-sm font-semibold">
-              "We treated the vector database as a <span className="text-blue-400">controlled data layer</span>, not just a search engine."
+              "Treat the vector database as a <span className="text-blue-400">controlled data layer</span>, not just a search engine."
             </p>
           </div>
         </div>
@@ -194,10 +192,10 @@ export default function VectorDbPage() {
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
-          <h2 className="text-xl font-bold">Optimization</h2>
+          <h2 className="text-xl font-bold">Retrieval Optimization</h2>
         </div>
         <div className="bg-amber-50/60 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-6 space-y-4">
-          <p className="text-base font-semibold">"We improved retrieval quality using:"</p>
+          <p className="text-base font-semibold">Key levers for improving retrieval quality:</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               { icon: "✂️", label: "Chunk Size Tuning", desc: "Smaller = precise, Larger = more context" },
@@ -226,15 +224,15 @@ export default function VectorDbPage() {
             <thead>
               <tr className="bg-muted/70">
                 <th className="p-4 text-left font-semibold border-b border-border">Problem</th>
-                <th className="p-4 text-left font-semibold border-b border-border">What We Did</th>
+                <th className="p-4 text-left font-semibold border-b border-border">Solution</th>
               </tr>
             </thead>
             <tbody>
               {[
-                ["🌀 Hallucination", "Grounded responses with RAG — model only answers from retrieved context"],
-                ["🎯 Irrelevant Answers", "Semantic search returns meaning-based matches, not keyword matches"],
-                ["🔓 Data Leakage", "Access-controlled retrieval — users only get their permitted documents"],
-                ["📉 Poor Context Quality", "Top-K tuning + chunk overlap ensures rich, relevant context window"],
+                ["🌀 Hallucination", "RAG grounds responses — the model answers only from retrieved context"],
+                ["🎯 Irrelevant Answers", "Semantic search returns meaning-based matches, not just keyword matches"],
+                ["🔓 Data Leakage", "Access-controlled retrieval — users only see their permitted documents"],
+                ["📉 Poor Context Quality", "Top-K tuning + chunk overlap ensures a rich, relevant context window"],
               ].map(([problem, solution]) => (
                 <tr key={problem} className="border-b border-border hover:bg-muted/30 transition-colors">
                   <td className="p-4 font-medium">{problem}</td>
@@ -246,15 +244,15 @@ export default function VectorDbPage() {
         </div>
       </section>
 
-      {/* Slide 8 — Final Impact */}
+      {/* Slide 8 — Key Takeaway */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">8</span>
-          <h2 className="text-xl font-bold">Final Impact</h2>
+          <h2 className="text-xl font-bold">Key Takeaway</h2>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-8 space-y-6">
           <p className="text-xl font-bold text-center">
-            "This made the system accurate, context-aware, and safe for real-world use."
+            "Vector databases make AI systems accurate, context-aware, and safe for real-world use."
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
@@ -270,9 +268,9 @@ export default function VectorDbPage() {
             ))}
           </div>
           <div className="bg-slate-800 dark:bg-slate-900 text-slate-100 rounded-xl p-5 border border-slate-600">
-            <p className="text-xs text-slate-400 font-medium mb-1 uppercase tracking-wider">One-liner if interrupted</p>
+            <p className="text-xs text-slate-400 font-medium mb-1 uppercase tracking-wider">One-liner summary</p>
             <p className="text-sm font-semibold leading-relaxed">
-              "We used a vector database with a controlled RAG pipeline to retrieve relevant, secure context and ground LLM responses."
+              "A vector database with a controlled RAG pipeline retrieves relevant, secure context to ground LLM responses."
             </p>
           </div>
         </div>
