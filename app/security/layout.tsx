@@ -27,7 +27,9 @@ export default function SecurityLayout({
         activeSection="security"
         activeSubsection={getActiveSubsection()}
         onSectionChange={(section, subsection) => {
-          if (subsection === "security-intro") {
+          if (section === "agent-security") {
+            window.location.href = "/agent-security"
+          } else if (subsection === "security-intro") {
             window.location.href = "/security/introduction"
           } else if (subsection === "security-guardrails") {
             window.location.href = "/security/guardrails"
@@ -35,8 +37,6 @@ export default function SecurityLayout({
             window.location.href = "/security/principles"
           } else if (subsection === "security-owasp") {
             window.location.href = "/security/owasp"
-          } else if (subsection === "security-agent") {
-            window.location.href = "/security/agent-security"
           }
         }}
       />

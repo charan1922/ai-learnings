@@ -7,6 +7,7 @@ import {
   Zap,
   Scissors,
   GitBranch,
+  Bot,
   ChevronRight,
   ChevronDown,
 } from "lucide-react"
@@ -18,13 +19,13 @@ export type SidebarTopic =
   | "embeddings"
   | "chunking"
   | "graph-rag"
+  | "agent-security"
 
 export type SecuritySubsection =
   | "security-intro"
   | "security-guardrails"
   | "security-principles"
   | "security-owasp"
-  | "security-agent"
 
 interface SidebarProps {
   activeSection?: SidebarTopic
@@ -42,11 +43,6 @@ const securitySubItems = [
     id: "security-guardrails",
     label: "Guardrails",
     description: "Content Safety & Controls",
-  },
-  {
-    id: "security-agent",
-    label: "Agent Security",
-    description: "Risks & Mitigations",
   },
   {
     id: "security-principles",
@@ -68,6 +64,13 @@ const topics = [
     icon: Shield,
     color: "text-red-500",
     hasSubItems: true,
+  },
+  {
+    id: "agent-security",
+    label: "Agent Security",
+    description: "Risks & Mitigations",
+    icon: Bot,
+    color: "text-slate-500",
   },
   {
     id: "vector-db",
@@ -123,6 +126,7 @@ export function Sidebar({
         {topics.map((topic) => {
           const Icon = topic.icon
           const isExpanded = expandedItem === topic.id
+          const isActive = activeSection === topic.id
           const hasSubItems = "hasSubItems" in topic && topic.hasSubItems
 
           return (
@@ -139,7 +143,9 @@ export function Sidebar({
                 className={cn(
                   "w-full text-left px-4 py-3 rounded-lg transition-colors",
                   "hover:bg-accent hover:text-accent-foreground",
-                  isExpanded && hasSubItems && "bg-accent text-accent-foreground"
+                  (isExpanded && hasSubItems) || (isActive && !hasSubItems)
+                    ? "bg-accent text-accent-foreground"
+                    : ""
                 )}
               >
                 <div className="flex items-center justify-between">
