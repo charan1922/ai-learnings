@@ -21,6 +21,7 @@ export type SidebarTopic =
 
 export type SecuritySubsection =
   | "security-intro"
+  | "security-guardrails"
   | "security-principles"
   | "security-owasp"
 
@@ -35,6 +36,11 @@ const securitySubItems = [
     id: "security-intro",
     label: "Introduction",
     description: "4-Stage Lifecycle Framework",
+  },
+  {
+    id: "security-guardrails",
+    label: "Guardrails",
+    description: "Content Safety & Controls",
   },
   {
     id: "security-principles",
@@ -97,7 +103,7 @@ export function Sidebar({
   )
 
   return (
-    <aside className="w-64 border-r border-border bg-muted/40 p-6">
+    <aside className="w-64 border-r border-border bg-muted/40 p-6 sticky top-0 h-screen overflow-y-auto">
       <div className="mb-8">
         <h2 className="text-lg font-semibold tracking-tight">
           AI/RAG Concepts
