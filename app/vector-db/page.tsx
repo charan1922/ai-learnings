@@ -60,85 +60,70 @@ export default function VectorDbPage() {
         </div>
       </section>
 
-      {/* Slide 3 — Core Flow */}
-      <section className="space-y-4">
+      {/* Slide 3 — Pipeline: Ingestion + Query Flow */}
+      <section className="space-y-6">
         <div className="flex items-center gap-3">
           <span className="h-8 w-8 rounded-full bg-blue-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
-          <h2 className="text-xl font-bold">Core RAG Flow</h2>
+          <h2 className="text-xl font-bold">The RAG Pipeline</h2>
         </div>
 
-        <div className="rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden bg-blue-50/40 dark:bg-blue-950/20">
-          <RagImage src="/rag1.png" alt="RAG Pipeline Flow Diagram" className="w-full object-contain max-h-[500px]" />
-          <div className="p-6 space-y-2 font-mono text-sm">
-            {[
-              { step: "User Query", color: "text-blue-600 dark:text-blue-400", icon: "👤" },
-              { step: "Convert to Embedding", color: "text-purple-600 dark:text-purple-400", icon: "🔢" },
-              { step: "Search Vector DB (semantic similarity)", color: "text-violet-600 dark:text-violet-400", icon: "🔍" },
-              { step: "Retrieve Top-K Relevant Chunks", color: "text-amber-600 dark:text-amber-400", icon: "📦" },
-              { step: "Pass Context to LLM", color: "text-orange-600 dark:text-orange-400", icon: "🧠" },
-              { step: "Generate Grounded Answer", color: "text-green-600 dark:text-green-400", icon: "✅" },
-            ].map(({ step, color, icon }, i, arr) => (
-              <div key={step}>
-                <div className={`flex items-center gap-3 ${color} font-medium`}>
-                  <span>{icon}</span>
-                  <span>{step}</span>
-                </div>
-                {i < arr.length - 1 && <div className="ml-4 text-muted-foreground text-xs py-0.5">↓</div>}
-              </div>
-            ))}
+        {/* Two-phase explanation */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-1">Phase 1 — Ingestion (offline)</p>
+            <p className="text-sm text-muted-foreground">Documents are chunked, embedded, and indexed into the vector DB ahead of time.</p>
           </div>
+          <div className="bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Phase 2 — Query (real-time)</p>
+            <p className="text-sm text-muted-foreground">User query is embedded, matched against the index, and top-K chunks are passed to the LLM.</p>
+          </div>
+        </div>
+
+        {/* Images side by side, full width */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border-2 border-purple-200 dark:border-purple-800 overflow-hidden bg-purple-50/30 dark:bg-purple-950/20">
+            <div className="px-4 pt-3 pb-1">
+              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Ingestion Pipeline</p>
+            </div>
+            <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline" className="w-full object-contain" />
+          </div>
+          <div className="rounded-2xl border-2 border-blue-200 dark:border-blue-800 overflow-hidden bg-blue-50/30 dark:bg-blue-950/20">
+            <div className="px-4 pt-3 pb-1">
+              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Query Flow</p>
+            </div>
+            <RagImage src="/rag1.png" alt="RAG Query Flow" className="w-full object-contain" />
+          </div>
+        </div>
+
+        {/* Steps summary */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+          {[
+            { icon: "📥", step: "Ingest", desc: "Load docs" },
+            { icon: "✂️", step: "Chunk", desc: "Split + overlap" },
+            { icon: "🔢", step: "Embed", desc: "Vectorise" },
+            { icon: "🗄️", step: "Index", desc: "Store in DB" },
+            { icon: "🔍", step: "Retrieve", desc: "Top-K search" },
+            { icon: "🧠", step: "Generate", desc: "LLM + context" },
+          ].map(({ icon, step, desc }) => (
+            <div key={step} className="bg-muted/50 rounded-lg border border-border p-3 text-center space-y-1">
+              <p className="text-xl">{icon}</p>
+              <p className="font-semibold text-xs">{step}</p>
+              <p className="text-xs text-muted-foreground">{desc}</p>
+            </div>
+          ))}
         </div>
 
         <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/50 rounded-xl p-4">
           <p className="text-sm italic text-center text-muted-foreground">
-            "Instead of answering blindly, the model answers based on <strong className="text-foreground">retrieved context</strong>."
+            "Chunking strategy and retrieval tuning directly impact answer quality."
           </p>
         </div>
       </section>
 
-      {/* Slide 4 — Ingestion Pipeline */}
+      {/* Slide 4 — Security Considerations */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-full bg-purple-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
-          <h2 className="text-xl font-bold">Ingestion Pipeline</h2>
-        </div>
-        <div className="bg-purple-50/60 dark:bg-purple-950/20 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6 space-y-5">
-          <p className="text-base font-semibold">
-            A RAG pipeline involves preparing and indexing data before retrieval can happen.
-          </p>
-
-          <div className="rounded-xl border border-purple-200 dark:border-purple-800 overflow-hidden bg-background">
-            <RagImage src="/rag2.png" alt="RAG Ingestion Pipeline Diagram" className="w-full object-contain max-h-[500px]" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {[
-              { icon: "📥", step: "1. Document Ingestion", desc: "Load raw documents into the pipeline" },
-              { icon: "✂️", step: "2. Chunking", desc: "Split docs into sized chunks with overlap" },
-              { icon: "🔢", step: "3. Embedding Generation", desc: "Convert chunks to vector representations" },
-              { icon: "🗄️", step: "4. Store in Vector DB", desc: "Index vectors with metadata" },
-              { icon: "🔍", step: "5. Top-K Retrieval", desc: "Semantic search at query time" },
-              { icon: "🧠", step: "6. LLM + Context", desc: "Ground the model with retrieved chunks" },
-            ].map(({ icon, step, desc }) => (
-              <div key={step} className="bg-background rounded-lg border border-purple-200 dark:border-purple-800 p-3 space-y-1">
-                <p className="text-lg">{icon}</p>
-                <p className="font-semibold text-xs">{step}</p>
-                <p className="text-xs text-muted-foreground">{desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
-            <p className="text-sm font-medium text-center text-purple-800 dark:text-purple-200">
-              "Chunking strategy and retrieval tuning directly impact answer quality."
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Slide 5 — Security Angle */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+          <span className="h-8 w-8 rounded-full bg-red-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
           <h2 className="text-xl font-bold">Security Considerations</h2>
         </div>
         <div className="bg-slate-50/60 dark:bg-slate-950/20 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-6 space-y-5">
@@ -191,7 +176,7 @@ export default function VectorDbPage() {
       {/* Slide 6 — Optimization */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+          <span className="h-8 w-8 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
           <h2 className="text-xl font-bold">Retrieval Optimization</h2>
         </div>
         <div className="bg-amber-50/60 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-6 space-y-4">
@@ -216,7 +201,7 @@ export default function VectorDbPage() {
       {/* Slide 7 — Problem → Solution Table */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-full bg-indigo-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+          <span className="h-8 w-8 rounded-full bg-indigo-500 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
           <h2 className="text-xl font-bold">Problem → Solution</h2>
         </div>
         <div className="overflow-x-auto rounded-xl border border-border">
@@ -247,7 +232,7 @@ export default function VectorDbPage() {
       {/* Slide 8 — Key Takeaway */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">8</span>
+          <span className="h-8 w-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
           <h2 className="text-xl font-bold">Key Takeaway</h2>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-8 space-y-6">
