@@ -23,6 +23,10 @@ const owasp10 = [
     id: "LLM05",
     title: "Supply Chain Vulnerabilities",
     description: "Compromised third-party components, services, or datasets undermine AI system integrity, causing breaches and failures.",
+    reference: {
+      label: "Vercel April 2026 security incident — what we know",
+      url: "https://vercel.com/kb/bulletin/vercel-april-2026-security-incident#what-we-know",
+    },
   },
   {
     id: "LLM06",
@@ -79,6 +83,18 @@ export default function OWASPPage() {
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {item.description}
                 </p>
+                {item.reference && (
+                  <p className="mt-2 text-xs">
+                    <a
+                      href={item.reference.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {item.reference.label}
+                    </a>
+                  </p>
+                )}
               </div>
             </div>
           </div>

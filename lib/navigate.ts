@@ -9,6 +9,8 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
     else window.location.href = "/security/introduction"
   } else if (section === "vector-db") {
     if (subsection === "vector-db-considerations") window.location.href = "/vector-db/considerations"
+    else if (subsection === "vector-db-demo") window.location.href = "/vector-db/demo"
+    else if (subsection === "vector-db-rag-example-2") window.location.href = "/vector-db/rag-example-2"
     else if (subsection === "vector-db-rag-example") window.location.href = "/vector-db/rag-example"
     else window.location.href = "/vector-db/introduction"
   } else if (section === "embeddings") {

@@ -9,6 +9,8 @@ export default function VectorDbLayout({ children }: { children: React.ReactNode
 
   const activeSubsection =
     pathname.includes("/considerations") ? "vector-db-considerations" :
+    pathname.includes("/demo") ? "vector-db-demo" :
+    pathname.includes("/rag-example-2") ? "vector-db-rag-example-2" :
     pathname.includes("/rag-example") ? "vector-db-rag-example" :
     "vector-db-intro"
 

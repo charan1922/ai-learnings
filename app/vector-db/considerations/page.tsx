@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+
 const phases = [
   {
     num: "1",
@@ -5,6 +9,7 @@ const phases = [
     title: "Data Ingestion Phase",
     color: "bg-orange-50/60 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800",
     numColor: "bg-orange-500",
+    accentText: "text-orange-700 dark:text-orange-300",
     note: "Most people underestimate this — but this is the foundation.",
     items: [
       {
@@ -35,6 +40,7 @@ const phases = [
     title: "Embedding Phase",
     color: "bg-purple-50/60 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800",
     numColor: "bg-purple-500",
+    accentText: "text-purple-700 dark:text-purple-300",
     note: "Embedding choice directly impacts retrieval quality.",
     items: [
       {
@@ -61,6 +67,7 @@ const phases = [
     title: "Storage & Indexing Phase",
     color: "bg-blue-50/60 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800",
     numColor: "bg-blue-500",
+    accentText: "text-blue-700 dark:text-blue-300",
     note: "This is where performance is determined.",
     items: [
       {
@@ -87,6 +94,7 @@ const phases = [
     title: "Retrieval Phase",
     color: "bg-red-50/60 dark:bg-red-950/20 border-red-200 dark:border-red-800",
     numColor: "bg-red-500",
+    accentText: "text-red-700 dark:text-red-300",
     note: "This is where most systems fail.",
     highlight: '"Retrieval quality matters more than model quality."',
     items: [
@@ -118,6 +126,7 @@ const phases = [
     title: "Generation Phase",
     color: "bg-green-50/60 dark:bg-green-950/20 border-green-200 dark:border-green-800",
     numColor: "bg-green-500",
+    accentText: "text-green-700 dark:text-green-300",
     note: "Context quality going in determines answer quality coming out.",
     items: [
       {
@@ -148,6 +157,7 @@ const phases = [
     title: "Continuous Improvement",
     color: "bg-amber-50/60 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800",
     numColor: "bg-amber-500",
+    accentText: "text-amber-700 dark:text-amber-300",
     note: "Most ignored — but what makes it production-grade.",
     items: [
       {
@@ -168,9 +178,144 @@ const phases = [
       },
     ],
   },
+  {
+    num: "✦",
+    icon: "🔐",
+    title: "Cross-Cutting: Security Across All Phases",
+    color: "bg-indigo-50/60 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-800",
+    numColor: "bg-slate-600",
+    accentText: "text-indigo-700 dark:text-indigo-300",
+    note: "These apply at every stage — not just retrieval.",
+    items: [
+      { label: "🛡️ Input Validation", points: ["Sanitize and validate all queries before embedding", "Reject or flag inputs that look like prompt injection"] },
+      { label: "🔍 Output Filtering", points: ["Screen retrieved content before the LLM sees it", "Remove or mask PII and sensitive data from context"] },
+      { label: "🔐 Access Control", points: ["Enforce user/role permissions at every phase", "Namespace or partition data per tenant in the vector store"] },
+      { label: "📋 Audit Logs", points: ["Log every retrieval and generation for traceability", "Required for compliance — who asked what, when, and what was returned"] },
+    ],
+  },
 ]
 
+const TOTAL = phases.length;
+
 export default function VectorDbConsiderationsPage() {
+  const [demoMode, setDemoMode] = useState(false);
+  const [current, setCurrent] = useState(0);
+
+  const prev = useCallback(() => setCurrent(c => Math.max(0, c - 1)), []);
+  const next = useCallback(() => setCurrent(c => Math.min(TOTAL - 1, c + 1)), []);
+
+  useEffect(() => {
+    if (!demoMode) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+      if (e.key === 'Escape') setDemoMode(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [demoMode, next, prev]);
+
+  const phase = phases[current];
+
+  if (demoMode) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex flex-col">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-8 py-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold text-muted-foreground">
+              Vector Databases & RAG — What to Consider
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              {current < TOTAL - 1 ? `Phase ${current + 1}` : 'Security'} of {TOTAL - 1} phases
+            </span>
+            <button
+              onClick={() => setDemoMode(false)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-accent transition-colors"
+            >
+              Exit Demo ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Progress dots */}
+        <div className="flex items-center justify-center gap-2 pt-4">
+          {phases.map((p, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`w-2.5 h-2.5 rounded-full transition-all ${
+                i === current
+                  ? `${phase.numColor} scale-125`
+                  : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 overflow-auto px-12 py-8 max-w-5xl mx-auto w-full">
+          <div className="flex items-center gap-4 mb-6">
+            <span className={`h-12 w-12 rounded-full ${phase.numColor} text-white text-xl font-bold flex items-center justify-center flex-shrink-0`}>
+              {phase.num}
+            </span>
+            <div>
+              <h2 className="text-3xl font-bold">{phase.icon} {phase.title}</h2>
+              <p className={`text-base font-medium mt-0.5 ${phase.accentText}`}>{phase.note}</p>
+            </div>
+          </div>
+
+          <div className={`${phase.color} border-2 rounded-2xl p-8 space-y-5`}>
+            {phase.highlight && (
+              <div className="bg-slate-800 dark:bg-slate-900 text-slate-100 rounded-xl p-4 text-center border border-slate-600">
+                <p className="text-base font-semibold">{phase.highlight}</p>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              {phase.items.map(({ label, points }) => (
+                <div key={label} className="bg-background rounded-xl border border-border p-5 space-y-3">
+                  <p className="font-semibold text-sm">{label}</p>
+                  <ul className="space-y-2">
+                    {points.map((p) => (
+                      <li key={p} className="flex gap-2 items-start text-sm text-muted-foreground">
+                        <span className="text-blue-400 flex-shrink-0 mt-0.5">→</span>
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom nav */}
+        <div className="flex items-center justify-between px-12 py-5 border-t border-border">
+          <button
+            onClick={prev}
+            disabled={current === 0}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            ← Previous
+          </button>
+
+          <span className="text-xs text-muted-foreground">← → arrow keys to navigate · Esc to exit</span>
+
+          <button
+            onClick={next}
+            disabled={current === TOTAL - 1}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal scroll view
   return (
     <div className="space-y-10">
 
@@ -179,9 +324,15 @@ export default function VectorDbConsiderationsPage() {
           🗄️ VECTOR DATABASES & RAG
         </div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">What to Consider</h1>
-        <p className="text-muted-foreground text-base">
+        <p className="text-muted-foreground text-base mb-5">
           RAG is not just retrieval — it involves careful design across ingestion, embedding, indexing, retrieval, and generation. Each phase impacts accuracy, performance, and security.
         </p>
+        <button
+          onClick={() => { setCurrent(0); setDemoMode(true); }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
+        >
+          ▶ Present in Demo Mode
+        </button>
       </div>
 
       {phases.map(({ num, icon, title, color, numColor, note, highlight, items }) => (

@@ -6,6 +6,8 @@ const nextConfig = {
     '@langchain/core',
     'openai',
     '@pinecone-database/pinecone',
+    'pdf-parse',
+    'mammoth',
   ],
 }
 

@@ -48,6 +48,8 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "vector-db-intro",          label: "Introduction",      description: "Problem, Solution & RAG Flow" },
     { id: "vector-db-considerations", label: "What to Consider",  description: "Security & Optimization" },
     { id: "vector-db-rag-example",    label: "RAG Example",       description: "LangChain, Pinecone, Azure OpenAI" },
+    { id: "vector-db-rag-example-2",  label: "RAG Example 2",     description: "File Upload, @azure/openai" },
+    { id: "vector-db-demo",           label: "Live Demo",          description: "Interactive RAG Walkthrough" },
   ],
 }
 
