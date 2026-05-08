@@ -179,6 +179,52 @@ const phases = [
     ],
   },
   {
+    num: "7",
+    icon: "🏷️",
+    title: "Versioning & Promotion",
+    color: "bg-teal-50/60 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800",
+    numColor: "bg-teal-500",
+    accentText: "text-teal-700 dark:text-teal-300",
+    note: "Treat your index like code — version it, evaluate it, promote it safely.",
+    items: [
+      {
+        label: "Source Versioning",
+        points: [
+          "Assign every ingest run a documentVersion + ingestId UUID in chunk metadata",
+          "Never overwrite — write new versions to isolated namespaces",
+        ],
+      },
+      {
+        label: "Embedding Versioning",
+        points: [
+          "Store embeddingModel, chunkSize, chunkOverlap in every chunk's metadata",
+          "If you swap models, you know exactly what produced each vector",
+        ],
+      },
+      {
+        label: "Namespace Isolation",
+        points: [
+          "Use Pinecone namespaces as version slots: {base}-v1, {base}-v2, …",
+          "Live queries route to the active namespace via a config alias",
+        ],
+      },
+      {
+        label: "Eval Before Promote",
+        points: [
+          "Run recall + LLM-judge accuracy on a known Q&A set against the candidate",
+          "Only promote when metrics meet threshold — never blind-swap in production",
+        ],
+      },
+      {
+        label: "Incremental vs Full Re-index",
+        points: [
+          "Incremental: delete old chunks for this source only, insert new ones",
+          "Full: deleteAll on the namespace, re-ingest everything fresh",
+        ],
+      },
+    ],
+  },
+  {
     num: "✦",
     icon: "🔐",
     title: "Cross-Cutting: Security Across All Phases",

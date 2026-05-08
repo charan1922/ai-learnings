@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AzureOpenAI } from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { randomUUID } from 'node:crypto';
 import { ipv4Fetch } from '@/lib/ipv4-fetch';
+import { getActiveNamespace } from '@/lib/rag-config';
+import type { VersionedChunkMetadata } from '@/lib/rag-versioning';
 
-const NAMESPACE = process.env.PINECONE_NAMESPACE ?? process.env.NEXT_PUBLIC_PINECONE_NAMESPACE ?? 'rag-example-2';
+const CHUNK_SIZE = 500;
+const CHUNK_OVERLAP = 50;
 
-function chunkText(text: string, chunkSize = 500, overlap = 50): string[] {
+function chunkText(text: string, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP): string[] {
   const chunks: string[] = [];
   let start = 0;
   while (start < text.length) {
@@ -43,12 +47,19 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    // allow caller to override namespace per-ingest (optional)
+
     const nsField = formData.get('namespace');
-    const namespace = typeof nsField === 'string' && nsField.trim() ? nsField : NAMESPACE;
-    // allow caller to override index name per-ingest (optional)
+    const namespace = typeof nsField === 'string' && nsField.trim() ? nsField.trim() : getActiveNamespace();
+
     const idxField = formData.get('index');
-    const indexName = typeof idxField === 'string' && idxField.trim() ? idxField : process.env.PINECONE_INDEX_NAME!;
+    const indexName = typeof idxField === 'string' && idxField.trim() ? idxField.trim() : process.env.PINECONE_INDEX_NAME!;
+
+    const dvField = formData.get('documentVersion');
+    const documentVersion = typeof dvField === 'string' && dvField.trim() ? dvField.trim() : 'v1';
+
+    const modeField = formData.get('mode');
+    const mode: 'full' | 'incremental' =
+      modeField === 'full' ? 'full' : 'incremental';
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -74,16 +85,53 @@ export async function POST(request: NextRequest) {
     const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
     const index = pinecone.index(indexName).namespace(namespace);
 
+    // Full mode: wipe the namespace before re-ingesting
+    if (mode === 'full') {
+      await index.deleteAll();
+    }
+
+    // Incremental mode: remove old chunks for this source only
+    if (mode === 'incremental') {
+      let paginationToken: string | undefined;
+      const idsToDelete: string[] = [];
+
+      do {
+        const listResult = await index.listPaginated(
+          paginationToken ? { paginationToken } : {}
+        );
+        const pageIds = (listResult.vectors ?? [])
+          .map(v => v.id)
+          .filter((id): id is string => !!id);
+
+        if (pageIds.length > 0) {
+          const fetched = await index.fetch(pageIds);
+          for (const record of Object.values(fetched.records)) {
+            if ((record.metadata as Record<string, unknown>)?.source === filename) {
+              idsToDelete.push(record.id);
+            }
+          }
+        }
+
+        paginationToken = listResult.pagination?.next;
+      } while (paginationToken);
+
+      if (idsToDelete.length > 0) {
+        await index.deleteMany(idsToDelete);
+      }
+    }
+
     const chunks = chunkText(text.trim());
     const ingestedAt = new Date().toISOString();
+    const ingestId = randomUUID();
+    const embeddingModel = process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!;
 
     const embeddingResponse = await embedClient.embeddings.create({
-      model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!,
+      model: embeddingModel,
       input: chunks,
     });
 
     const vectors = embeddingResponse.data.map((item, i) => ({
-      id: `${Date.now()}-${i}`,
+      id: `${ingestId}-${i}`,
       values: item.embedding,
       metadata: {
         source: filename,
@@ -91,7 +139,12 @@ export async function POST(request: NextRequest) {
         totalChunks: chunks.length,
         ingestedAt,
         text: chunks[i],
-      },
+        documentVersion,
+        ingestId,
+        embeddingModel,
+        chunkSize: CHUNK_SIZE,
+        chunkOverlap: CHUNK_OVERLAP,
+      } satisfies VersionedChunkMetadata,
     }));
 
     await index.upsert(vectors);
@@ -100,6 +153,12 @@ export async function POST(request: NextRequest) {
       message: 'File ingested successfully',
       chunks: chunks.length,
       filename,
+      namespace,
+      documentVersion,
+      ingestId,
+      embeddingModel,
+      chunkSize: CHUNK_SIZE,
+      chunkOverlap: CHUNK_OVERLAP,
       sampleChunks: chunks.slice(0, 3),
       sampleVector: {
         id: vectors[0].id,

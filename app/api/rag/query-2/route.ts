@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AzureOpenAI } from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { ipv4Fetch } from '@/lib/ipv4-fetch';
-
-const NAMESPACE = process.env.PINECONE_NAMESPACE ?? process.env.NEXT_PUBLIC_PINECONE_NAMESPACE ?? 'rag-example-2';
+import { getActiveNamespace } from '@/lib/rag-config';
 
 export async function POST(request: NextRequest) {
   try {
-    const { query, topK = 3 } = await request.json();
+    const { query, topK = 3, namespace: nsOverride } = await request.json();
+    const namespace = typeof nsOverride === 'string' && nsOverride.trim()
+      ? nsOverride.trim()
+      : getActiveNamespace();
 
     if (!query?.trim()) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
@@ -27,7 +29,7 @@ export async function POST(request: NextRequest) {
     });
 
     const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-    const index = pinecone.index(process.env.PINECONE_INDEX_NAME!).namespace(NAMESPACE);
+    const index = pinecone.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace);
 
     const embeddingResponse = await embedClient.embeddings.create({
       model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!,
@@ -48,6 +50,10 @@ export async function POST(request: NextRequest) {
         chunkIndex: match.metadata?.chunkIndex,
         totalChunks: match.metadata?.totalChunks,
         score: match.score,
+        // versioning fields
+        documentVersion: match.metadata?.documentVersion,
+        ingestId: match.metadata?.ingestId,
+        embeddingModel: match.metadata?.embeddingModel,
       },
     }));
 
@@ -75,7 +81,7 @@ ${context}`,
 
     const answer = chatResponse.choices[0]?.message?.content ?? '';
 
-    return NextResponse.json({ answer, sources });
+    return NextResponse.json({ answer, sources, namespace });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('Query-2 error:', msg);

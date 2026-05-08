@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-type IngestStatus = { type: 'success' | 'error'; message: string };
+type IngestStatus = { type: 'success' | 'error'; message: string; namespace?: string; documentVersion?: string; ingestId?: string };
 type Source = { content: string; metadata: Record<string, unknown> };
 type QueryResult = { answer: string; sources: Source[] };
 
@@ -64,7 +64,10 @@ export default function RagExample2Page() {
       if (res.ok) {
         setIngestStatus({
           type: 'success',
-          message: `"${data.filename}" ingested as ${data.chunks} chunk${data.chunks !== 1 ? 's' : ''} into Pinecone (namespace: rag-example-2).`,
+          message: `"${data.filename}" ingested as ${data.chunks} chunk${data.chunks !== 1 ? 's' : ''} into Pinecone.`,
+          namespace: data.namespace,
+          documentVersion: data.documentVersion,
+          ingestId: data.ingestId,
         });
       } else {
         setIngestStatus({ type: 'error', message: data.error || 'Ingestion failed.' });
@@ -134,8 +137,7 @@ export default function RagExample2Page() {
           <span className="text-xs font-semibold text-purple-600 uppercase tracking-widest">Step 1</span>
           <h2 className="text-xl font-semibold mt-1">Upload &amp; Ingest Document</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Your file is chunked, embedded via Azure OpenAI, and stored in Pinecone under namespace{' '}
-            <code className="text-xs bg-muted px-1 rounded">rag-example-2</code>.
+            Your file is chunked, embedded via Azure OpenAI, and stored in Pinecone under the active versioned namespace.
           </p>
         </div>
 
@@ -143,7 +145,7 @@ export default function RagExample2Page() {
         <div className="grid grid-cols-3 gap-3">
           {[
             { label: 'Supported formats', value: '.md · .pdf · .doc · .docx' },
-            { label: 'Namespace isolation', value: 'rag-example-2 (separate from Example 1)' },
+            { label: 'Namespace isolation', value: 'Active namespace (versioned slots)' },
             { label: 'Chunk size', value: '500 chars · 50 char overlap' },
           ].map(card => (
             <div key={card.label} className="rounded-lg border bg-muted/40 p-3">
@@ -219,14 +221,20 @@ export default function RagExample2Page() {
 
         {ingestStatus && (
           <div
-            className={`rounded-lg px-4 py-3 text-sm border ${
+            className={`rounded-lg px-4 py-3 text-sm border space-y-1.5 ${
               ingestStatus.type === 'success'
                 ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-950/30 dark:border-green-800 dark:text-green-300'
                 : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950/30 dark:border-red-800 dark:text-red-300'
             }`}
           >
-            {ingestStatus.type === 'success' ? '✅ ' : '❌ '}
-            {ingestStatus.message}
+            <div>{ingestStatus.type === 'success' ? '✅ ' : '❌ '}{ingestStatus.message}</div>
+            {ingestStatus.type === 'success' && (
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs opacity-80 font-mono">
+                {ingestStatus.namespace && <span>namespace: {ingestStatus.namespace}</span>}
+                {ingestStatus.documentVersion && <span>version: {ingestStatus.documentVersion}</span>}
+                {ingestStatus.ingestId && <span>ingestId: {ingestStatus.ingestId}</span>}
+              </div>
+            )}
           </div>
         )}
       </section>
@@ -300,6 +308,8 @@ export default function RagExample2Page() {
                         <span>📄 {String(src.metadata.source ?? 'unknown')}</span>
                         <span>Chunk {Number(src.metadata.chunkIndex ?? 0) + 1} / {String(src.metadata.totalChunks ?? '?')}</span>
                         <span>Score: {(Number(src.metadata.score ?? 0) * 100).toFixed(1)}%</span>
+                        {src.metadata.documentVersion && <span className="font-mono bg-muted px-1 rounded">v: {String(src.metadata.documentVersion)}</span>}
+                        {src.metadata.embeddingModel && <span className="font-mono bg-muted px-1 rounded">{String(src.metadata.embeddingModel)}</span>}
                       </div>
                       <p className="text-xs font-mono leading-relaxed text-foreground/80">{src.content}</p>
                     </div>
@@ -325,7 +335,7 @@ export default function RagExample2Page() {
               ['1', 'Parse file', 'Extract text from .md, .pdf, or .docx'],
               ['2', 'Chunk', 'Split into 500-char overlapping segments'],
               ['3', 'Embed', 'Azure OpenAI text-embedding-3-small'],
-              ['4', 'Store', 'Upsert to Pinecone namespace rag-example-2'],
+              ['4', 'Store', 'Upsert to Pinecone — namespace from active config'],
             ].map(([n, title, desc]) => (
               <div key={n} className="flex gap-3 items-start">
                 <div className="w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{n}</div>
@@ -362,7 +372,7 @@ export default function RagExample2Page() {
             {[
               ['SDK', '@azure/openai v2', 'Native HTTPS — no IPv6 issues'],
               ['Embeddings', 'text-embedding-3-small', '1536 dimensions, cosine similarity'],
-              ['Vector store', 'Pinecone', 'Serverless, namespace: rag-example-2'],
+              ['Vector store', 'Pinecone', 'Serverless, versioned namespace slots'],
               ['Chat model', 'GPT-4.1', 'Azure OpenAI, context-grounded'],
               ['File parsing', 'pdf-parse v2 · mammoth', 'PDF and DOCX extraction'],
               ['Framework', 'Next.js 15 App Router', 'Server-side API routes'],

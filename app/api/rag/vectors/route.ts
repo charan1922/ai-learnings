@@ -1,19 +1,22 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { getActiveNamespace } from '@/lib/rag-config';
 
-const NAMESPACE = process.env.PINECONE_NAMESPACE ?? process.env.NEXT_PUBLIC_PINECONE_NAMESPACE ?? 'rag-example-2';
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const nsParam = searchParams.get('namespace');
+    const namespace = nsParam?.trim() || getActiveNamespace();
+
     const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-    const index = pinecone.index(process.env.PINECONE_INDEX_NAME!).namespace(NAMESPACE);
+    const index = pinecone.index(process.env.PINECONE_INDEX_NAME!).namespace(namespace);
 
     // List all vector IDs in the namespace
     const listResult = await index.listPaginated();
     const ids = (listResult.vectors ?? []).map(v => v.id).filter((id): id is string => !!id);
 
     if (ids.length === 0) {
-      return NextResponse.json({ vectors: [], total: 0 });
+      return NextResponse.json({ vectors: [], total: 0, namespace });
     }
 
     // Fetch full records (values + metadata) in batches of 100
@@ -40,7 +43,7 @@ export async function GET() {
       return ai - bi;
     });
 
-    return NextResponse.json({ vectors: allRecords, total: allRecords.length });
+    return NextResponse.json({ vectors: allRecords, total: allRecords.length, namespace });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('Vectors route error:', msg);

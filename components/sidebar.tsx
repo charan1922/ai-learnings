@@ -9,6 +9,7 @@ import {
   GitBranch,
   ChevronRight,
   ChevronDown,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -18,6 +19,7 @@ export type SidebarTopic =
   | "embeddings"
   | "chunking"
   | "graph-rag"
+  | "agent-it"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -71,13 +73,6 @@ const topics = [
     hasSubItems: true,
   },
   {
-    id: "embeddings",
-    label: "In-Memory Embeddings",
-    description: "Embedding Comparisons",
-    icon: Zap,
-    color: "text-amber-500",
-  },
-  {
     id: "chunking",
     label: "Chunking Strategies",
     description: "Text Segmentation",
@@ -85,11 +80,11 @@ const topics = [
     color: "text-green-500",
   },
   {
-    id: "graph-rag",
-    label: "Graph RAG",
-    description: "Knowledge Graphs",
-    icon: GitBranch,
-    color: "text-purple-500",
+    id: "agent-it",
+    label: "Agent IT",
+    description: "Agent Integration & Tools",
+    icon: Bot,
+    color: "text-indigo-500",
   },
 ] as const
 
