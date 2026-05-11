@@ -19,5 +19,7 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
     window.location.href = "/chunking"
   } else if (section === "graph-rag") {
     window.location.href = "/graph-rag"
+  } else if (section === "agent-it") {
+    window.location.href = "/agent-it"
   }
 }
