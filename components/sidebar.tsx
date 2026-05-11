@@ -9,6 +9,7 @@ import {
   GitBranch,
   ChevronRight,
   ChevronDown,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -18,6 +19,7 @@ export type SidebarTopic =
   | "embeddings"
   | "chunking"
   | "graph-rag"
+  | "agent-it"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -47,6 +49,9 @@ const subItems: Record<string, { id: string; label: string; description: string 
   "vector-db": [
     { id: "vector-db-intro",          label: "Introduction",      description: "Problem, Solution & RAG Flow" },
     { id: "vector-db-considerations", label: "What to Consider",  description: "Security & Optimization" },
+    { id: "vector-db-rag-example",    label: "RAG Example",       description: "LangChain, Pinecone, Azure OpenAI" },
+    { id: "vector-db-rag-example-2",  label: "RAG Example 2",     description: "File Upload, @azure/openai" },
+    { id: "vector-db-demo",           label: "Live Demo",          description: "Interactive RAG Walkthrough" },
   ],
 }
 
@@ -68,13 +73,6 @@ const topics = [
     hasSubItems: true,
   },
   {
-    id: "embeddings",
-    label: "In-Memory Embeddings",
-    description: "Embedding Comparisons",
-    icon: Zap,
-    color: "text-amber-500",
-  },
-  {
     id: "chunking",
     label: "Chunking Strategies",
     description: "Text Segmentation",
@@ -82,11 +80,11 @@ const topics = [
     color: "text-green-500",
   },
   {
-    id: "graph-rag",
-    label: "Graph RAG",
-    description: "Knowledge Graphs",
-    icon: GitBranch,
-    color: "text-purple-500",
+    id: "agent-it",
+    label: "Agent IT",
+    description: "Agent Integration & Tools",
+    icon: Bot,
+    color: "text-indigo-500",
   },
 ] as const
 

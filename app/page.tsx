@@ -143,6 +143,11 @@ const contentSections = {
       "Graph-based retrieval augmentation",
     ],
   },
+  "agent-it": {
+    title: "Agent IT",
+    subtitle: "AI-powered IT Ticket Routing & Resolution",
+    topics: [],
+  },
 }
 
 export default function Page() {

@@ -2,13 +2,17 @@
 
 import { Sidebar } from "@/components/sidebar"
 import { handleNav } from "@/lib/navigate"
-import { usePathname } from "next/navigation"
+import { usePathname } from "next/navigation" 
 
 export default function VectorDbLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const activeSubsection =
-    pathname.includes("/considerations") ? "vector-db-considerations" : "vector-db-intro"
+    pathname.includes("/considerations") ? "vector-db-considerations" :
+    pathname.includes("/demo") ? "vector-db-demo" :
+    pathname.includes("/rag-example-2") ? "vector-db-rag-example-2" :
+    pathname.includes("/rag-example") ? "vector-db-rag-example" :
+    "vector-db-intro"
 
   return (
     <div className="flex min-h-svh bg-background">
