@@ -148,6 +148,11 @@ const contentSections = {
     subtitle: "AI-powered IT Ticket Routing & Resolution",
     topics: [],
   },
+  "agent-it-langgraph": {
+    title: "Agent IT — LangGraph",
+    subtitle: "Same solution modelled as an explicit StateGraph",
+    topics: [],
+  },
 }
 
 export default function Page() {

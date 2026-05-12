@@ -21,5 +21,7 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
     window.location.href = "/graph-rag"
   } else if (section === "agent-it") {
     window.location.href = "/agent-it"
+  } else if (section === "agent-it-langgraph") {
+    window.location.href = "/agent-it-langgraph"
   }
 }

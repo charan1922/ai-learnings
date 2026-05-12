@@ -20,6 +20,7 @@ export type SidebarTopic =
   | "chunking"
   | "graph-rag"
   | "agent-it"
+  | "agent-it-langgraph"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -85,6 +86,13 @@ const topics = [
     description: "Agent Integration & Tools",
     icon: Bot,
     color: "text-indigo-500",
+  },
+  {
+    id: "agent-it-langgraph",
+    label: "Agent IT (LangGraph)",
+    description: "Graph-based ticket routing",
+    icon: GitBranch,
+    color: "text-violet-500",
   },
 ] as const
 
