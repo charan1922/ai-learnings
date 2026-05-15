@@ -216,6 +216,7 @@ export default function AgentITPage() {
   const [candidateNamespace, setCandidateNamespace] = useState('it-tickets-v2');
   const [seedMode, setSeedMode] = useState<'incremental' | 'full'>('full');
   const [blobSeedMode, setBlobSeedMode] = useState<'incremental' | 'full'>('incremental');
+  const [embeddingModel, setEmbeddingModel] = useState('text-embedding-3-small');
   const [candidateSeedLoading, setCandidateSeedLoading] = useState(false);
   const [candidateSeedResult, setCandidateSeedResult] = useState<SeedResult | null>(null);
   const [promoteLoading, setPromoteLoading] = useState(false);
@@ -241,6 +242,8 @@ export default function AgentITPage() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [uploadError, setUploadError] = useState('');
+  const [currentBlobName, setCurrentBlobName] = useState('IT_Tickets_v1.xlsx');
+  const [availableBlobs, setAvailableBlobs] = useState<string[]>([]);
   const [blobVersions, setBlobVersions] = useState<BlobVersion[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<BlobVersion | null>(null);
@@ -428,9 +431,22 @@ export default function AgentITPage() {
     }
   }, []);
 
+  const loadAvailableBlobs = useCallback(async () => {
+    try {
+      const res = await fetch('/api/agent-it/blob/versions');
+      const data = await res.json();
+      if (res.ok && data.blobs?.length) setAvailableBlobs(data.blobs);
+    } catch {
+      // silently ignore — versions list is still usable
+    }
+  }, []);
+
   useEffect(() => {
-    if (activeTab === 'versions') loadBlobVersions('IT_Tickets_v1.xlsx');
-  }, [activeTab, loadBlobVersions]);
+    if (activeTab === 'versions') {
+      loadAvailableBlobs();
+      loadBlobVersions(currentBlobName);
+    }
+  }, [activeTab, loadBlobVersions, currentBlobName, loadAvailableBlobs]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -445,8 +461,10 @@ export default function AgentITPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setUploadResult(data);
+      setCurrentBlobName(data.blobName);
       setBlobVersions(data.versions ?? []);
       setUploadFile(null);
+      loadAvailableBlobs();
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -466,6 +484,7 @@ export default function AgentITPage() {
           blobVersionId: version.versionId,
           documentVersion: `blob-${version.versionId.slice(0, 8)}`,
           mode: blobSeedMode,
+          embeddingDeployment: embeddingModel,
         }),
       });
       const data = await res.json();
@@ -1201,10 +1220,30 @@ export default function AgentITPage() {
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2 font-medium text-sm">
                 <History className="h-4 w-4 text-indigo-500" />
-                Version History — IT_Tickets_v1.xlsx
+                Version History —
+                {availableBlobs.length > 1 ? (
+                  <select
+                    value={currentBlobName}
+                    onChange={e => { setCurrentBlobName(e.target.value); loadBlobVersions(e.target.value); }}
+                    className="font-mono text-xs border border-border rounded px-2 py-0.5 bg-background"
+                  >
+                    {availableBlobs.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                ) : (
+                  <span className="font-mono text-xs">{currentBlobName}</span>
+                )}
               </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-muted-foreground">Mode:</span>
+              <div className="flex items-center gap-3 text-xs flex-wrap">
+                <span className="text-muted-foreground">Embedding:</span>
+                <select
+                  value={embeddingModel}
+                  onChange={e => setEmbeddingModel(e.target.value)}
+                  className="font-mono text-xs border border-border rounded px-2 py-1 bg-background"
+                >
+                  <option value="text-embedding-3-small">text-embedding-3-small</option>
+                  <option value="text-embedding-3-large">text-embedding-3-large</option>
+                </select>
+                <span className="text-muted-foreground ml-2">Mode:</span>
                 {(['incremental', 'full'] as const).map(m => (
                   <label key={m} className="flex items-center gap-1 cursor-pointer">
                     <input
@@ -1219,7 +1258,7 @@ export default function AgentITPage() {
                   </label>
                 ))}
                 <button
-                  onClick={() => loadBlobVersions('IT_Tickets_v1.xlsx')}
+                  onClick={() => loadBlobVersions(currentBlobName)}
                   className="flex items-center gap-1 px-3 py-1.5 border border-border rounded hover:bg-accent"
                 >
                   <RefreshCw className="h-3 w-3" /> Refresh

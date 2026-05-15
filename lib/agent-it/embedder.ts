@@ -8,6 +8,9 @@ import { randomUUID } from 'node:crypto';
 
 export const ESCALATION_THRESHOLD = 0.75;
 
+export const EMBEDDING_MODELS = ['text-embedding-3-small', 'text-embedding-3-large'] as const;
+export type EmbeddingModel = typeof EMBEDDING_MODELS[number];
+
 // Embedding config — versioned alongside the namespace
 export const EMBEDDING_CONFIG = {
   model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT ?? 'text-embedding-3-small',
@@ -16,12 +19,20 @@ export const EMBEDDING_CONFIG = {
   preprocessing: 'category+priority+title+description+resolution',
 } as const;
 
-function getEmbedClient(): AzureOpenAI {
+function getAzureEndpoint(): string {
+  return (
+    process.env.AZURE_OPENAI_ENDPOINT ??
+    `https://${process.env.AZURE_OPENAI_INSTANCE_NAME}.openai.azure.com`
+  );
+}
+
+function getEmbedClient(deployment?: string): AzureOpenAI {
+  const dep = deployment ?? process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT ?? 'text-embedding-3-small';
   return new AzureOpenAI({
     apiKey: process.env.AZURE_OPENAI_API_KEY!,
-    endpoint: `https://${process.env.AZURE_OPENAI_INSTANCE_NAME}.openai.azure.com`,
+    endpoint: getAzureEndpoint(),
     apiVersion: '2024-02-01',
-    deployment: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!,
+    deployment: dep,
     fetch: ipv4Fetch,
     maxRetries: 1,
   });
@@ -37,14 +48,16 @@ export async function embedAndUpsertTicket(
   ticket: ITTicket,
   source: string = 'manual',
   documentVersion: string = 'v1',
-  namespace?: string,      // if omitted, uses active namespace
-  blobVersionId?: string   // Azure Blob version ID for full traceability
+  namespace?: string,           // if omitted, uses active namespace
+  blobVersionId?: string,       // Azure Blob version ID for full traceability
+  embeddingDeployment?: string  // override embedding model deployment
 ): Promise<string> {
+  const deployment = embeddingDeployment ?? process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT ?? 'text-embedding-3-small';
   const text = formatTicketForEmbedding(ticket);
-  const embedClient = getEmbedClient();
+  const embedClient = getEmbedClient(deployment);
 
   const response = await embedClient.embeddings.create({
-    model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!,
+    model: deployment,
     input: text,
   });
 
@@ -65,7 +78,7 @@ export async function embedAndUpsertTicket(
     ingestId,
     blobVersionId,
     // Embedding versioning fields
-    embeddingModel: EMBEDDING_CONFIG.model,
+    embeddingModel: deployment,
     chunkIndex: 0,
     totalChunks: EMBEDDING_CONFIG.chunkSize,
     ingestedAt: new Date().toISOString(),
@@ -81,10 +94,11 @@ export async function embedAndUpsertTicket(
   return vectorId;
 }
 
-export async function embedQuery(text: string): Promise<number[]> {
-  const embedClient = getEmbedClient();
+export async function embedQuery(text: string, embeddingDeployment?: string): Promise<number[]> {
+  const deployment = embeddingDeployment ?? process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT ?? 'text-embedding-3-small';
+  const embedClient = getEmbedClient(deployment);
   const response = await embedClient.embeddings.create({
-    model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT!,
+    model: deployment,
     input: text,
   });
   return response.data[0].embedding;

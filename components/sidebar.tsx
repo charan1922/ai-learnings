@@ -47,6 +47,10 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "security-principles",  label: "AI Principles",  description: "Fairness, Safety, Privacy..." },
     { id: "security-owasp",       label: "OWASP Top 10",   description: "LLM Security Vulnerabilities" },
   ],
+  "agent-it": [
+    { id: "agent-it-main",          label: "Tickets & Classify", description: "Classify tickets with vector similarity" },
+    { id: "agent-it-knowledgebase", label: "Knowledgebase",      description: "6 RAG versioning concepts" },
+  ],
   "vector-db": [
     { id: "vector-db-intro",          label: "Introduction",      description: "Problem, Solution & RAG Flow" },
     { id: "vector-db-considerations", label: "What to Consider",  description: "Security & Optimization" },
@@ -86,6 +90,7 @@ const topics = [
     description: "Agent Integration & Tools",
     icon: Bot,
     color: "text-indigo-500",
+    hasSubItems: true,
   },
   {
     id: "agent-it-langgraph",

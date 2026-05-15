@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { classificationGraph } from '@/lib/agent-it-langgraph/graph';
 import { getActiveITNamespace } from '@/lib/agent-it/it-config';
+import { semanticCacheLookup, storeCacheEntry } from '@/lib/semantic-cache';
+import { formatQueryForEmbedding } from '@/lib/agent-it/ticket-formatter';
+import { embedQuery } from '@/lib/agent-it/embedder';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +15,17 @@ export async function POST(request: NextRequest) {
 
     const namespace = getActiveITNamespace();
 
+    // Semantic cache check — embed first for similarity lookup
+    const queryText = formatQueryForEmbedding(title, description);
+    const queryVector = await embedQuery(queryText).catch(() => null);
+
+    if (queryVector) {
+      const cacheHit = await semanticCacheLookup<object>(queryVector).catch(() => null);
+      if (cacheHit) {
+        return NextResponse.json({ ...cacheHit.response, cacheHit: true, cacheSimilarity: cacheHit.similarity });
+      }
+    }
+
     const result = await classificationGraph.invoke({
       title,
       description,
@@ -21,7 +35,7 @@ export async function POST(request: NextRequest) {
       trace: [],
     });
 
-    return NextResponse.json({
+    const responsePayload = {
       category: result.topMatches?.[0]?.category ?? 'Unknown',
       confidence: result.confidence ?? 0,
       shouldEscalate: result.shouldEscalate ?? true,
@@ -29,7 +43,14 @@ export async function POST(request: NextRequest) {
       suggestedResolution: result.suggestedResolution ?? '',
       latencyMs: result.latencyMs ?? 0,
       trace: result.trace ?? [],
-    });
+    };
+
+    // Store in semantic cache (best-effort — graph already ran the embedding)
+    if (queryVector) {
+      await storeCacheEntry(queryText, queryVector, responsePayload, process.env.AZURE_OPENAI_CHAT_DEPLOYMENT!).catch(() => {});
+    }
+
+    return NextResponse.json({ ...responsePayload, cacheHit: false });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('LangGraph classify error:', msg);

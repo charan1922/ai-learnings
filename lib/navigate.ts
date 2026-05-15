@@ -20,7 +20,8 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
   } else if (section === "graph-rag") {
     window.location.href = "/graph-rag"
   } else if (section === "agent-it") {
-    window.location.href = "/agent-it"
+    if (subsection === "agent-it-knowledgebase") window.location.href = "/agent-it/knowledgebase"
+    else window.location.href = "/agent-it"
   } else if (section === "agent-it-langgraph") {
     window.location.href = "/agent-it-langgraph"
   }

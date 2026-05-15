@@ -4,6 +4,7 @@ import { ipv4Fetch } from '@/lib/ipv4-fetch';
 import { embedQuery, searchSimilarTickets, ESCALATION_THRESHOLD } from '@/lib/agent-it/embedder';
 import { formatQueryForEmbedding } from '@/lib/agent-it/ticket-formatter';
 import type { ClassificationResult } from '@/lib/agent-it/types';
+import { semanticCacheLookup, storeCacheEntry } from '@/lib/semantic-cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +19,12 @@ export async function POST(request: NextRequest) {
     // Embed the incoming ticket
     const queryText = formatQueryForEmbedding(title, description);
     const queryVector = await embedQuery(queryText);
+
+    // Semantic cache check
+    const cacheHit = await semanticCacheLookup<ClassificationResult>(queryVector).catch(() => null);
+    if (cacheHit) {
+      return NextResponse.json({ ...cacheHit.response, cacheHit: true, cacheSimilarity: cacheHit.similarity });
+    }
 
     // Find similar tickets in Pinecone
     const topMatches = await searchSimilarTickets(queryVector, topK);
@@ -74,7 +81,10 @@ ${context}`;
       latencyMs,
     };
 
-    return NextResponse.json(result);
+    // Store in semantic cache
+    await storeCacheEntry(queryText, queryVector, result, process.env.AZURE_OPENAI_CHAT_DEPLOYMENT!).catch(() => {});
+
+    return NextResponse.json({ ...result, cacheHit: false });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('Classify error:', msg);
