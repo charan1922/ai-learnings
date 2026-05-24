@@ -14,6 +14,7 @@ export default function SecurityLayout({ children }: { children: React.ReactNode
     if (pathname.includes("/agent-security")) return "security-agent"
     if (pathname.includes("/principles")) return "security-principles"
     if (pathname.includes("/owasp")) return "security-owasp"
+    if (pathname.includes("/career-advisor")) return "career-advisor"
     return "security-intro"
   }
 
