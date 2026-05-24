@@ -6,6 +6,7 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
     else if (subsection === "security-agent") window.location.href = "/security/agent-security"
     else if (subsection === "security-principles") window.location.href = "/security/principles"
     else if (subsection === "security-owasp") window.location.href = "/security/owasp"
+    else if (subsection === "career-advisor") window.location.href = "/security/career-advisor"
     else window.location.href = "/security/introduction"
   } else if (section === "vector-db") {
     if (subsection === "vector-db-considerations") window.location.href = "/vector-db/considerations"

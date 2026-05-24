@@ -4,7 +4,6 @@ import { useState } from "react"
 import {
   Shield,
   Database,
-  Zap,
   Scissors,
   GitBranch,
   ChevronRight,
@@ -30,6 +29,7 @@ export type SecuritySubsection =
   | "security-agent"
   | "security-principles"
   | "security-owasp"
+  | "career-advisor"
 
 export type VectorDbSubsection =
   | "vector-db-intro"
@@ -48,6 +48,7 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "security-agent",       label: "Agent Security", description: "Risks & Mitigations" },
     { id: "security-principles",  label: "AI Principles",  description: "Fairness, Safety, Privacy..." },
     { id: "security-owasp",       label: "OWASP Top 10",   description: "LLM Security Vulnerabilities" },
+    { id: "career-advisor",       label: "Career Advisor AI", description: "End-to-end responsible AI demo" },
   ],
   "agent-it": [
     { id: "agent-it-main",          label: "Tickets & Classify", description: "Classify tickets with vector similarity" },
