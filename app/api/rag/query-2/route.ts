@@ -3,6 +3,7 @@ import { AzureOpenAI } from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { ipv4Fetch } from '@/lib/ipv4-fetch';
 import { getActiveNamespace } from '@/lib/rag-config';
+import { semanticCacheLookup, storeCacheEntry } from '@/lib/semantic-cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,6 +37,12 @@ export async function POST(request: NextRequest) {
       input: query,
     });
     const queryVector = embeddingResponse.data[0].embedding;
+
+    // Semantic cache check — skip expensive Pinecone + LLM if similar query was answered recently
+    const cacheHit = await semanticCacheLookup<{ answer: string; sources: unknown[]; namespace: string }>(queryVector).catch(() => null);
+    if (cacheHit) {
+      return NextResponse.json({ ...cacheHit.response, cacheHit: true, cacheSimilarity: cacheHit.similarity });
+    }
 
     const searchResult = await index.query({
       vector: queryVector,
@@ -80,8 +87,12 @@ ${context}`,
     });
 
     const answer = chatResponse.choices[0]?.message?.content ?? '';
+    const responsePayload = { answer, sources, namespace };
 
-    return NextResponse.json({ answer, sources, namespace });
+    // Store in semantic cache for future similar queries
+    await storeCacheEntry(query, queryVector, responsePayload, process.env.AZURE_OPENAI_CHAT_DEPLOYMENT!).catch(() => {});
+
+    return NextResponse.json({ ...responsePayload, cacheHit: false });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     console.error('Query-2 error:', msg);

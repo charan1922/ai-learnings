@@ -20,6 +20,14 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
   } else if (section === "graph-rag") {
     window.location.href = "/graph-rag"
   } else if (section === "agent-it") {
-    window.location.href = "/agent-it"
+    if (subsection === "agent-it-knowledgebase") window.location.href = "/agent-it/knowledgebase"
+    else window.location.href = "/agent-it"
+  } else if (section === "agent-it-langgraph") {
+    window.location.href = "/agent-it-langgraph"
+  } else if (section === "prompt-engineering") {
+    if (subsection === "prompt-engineering-guide") window.location.href = "/prompt-engineering/prompt-engineering-guide"
+    else if (subsection === "smart-qa") window.location.href = "/prompt-engineering/smart-qa"
+    else if (subsection === "context-engineering") window.location.href = "/prompt-engineering/context-engineering"
+    else window.location.href = "/prompt-engineering/prompt-patterns"
   }
 }

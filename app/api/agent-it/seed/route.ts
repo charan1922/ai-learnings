@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
     const documentVersion: string = body.documentVersion ?? 'v1';
     const namespace: string = body.namespace ?? getActiveITNamespace();
     const mode: 'full' | 'incremental' = body.mode === 'full' ? 'full' : 'incremental';
+    const embeddingDeployment: string | undefined = body.embeddingDeployment;
 
     let fileBuffer: Buffer;
     let source: string;
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
         });
         inserted++;
 
-        const vectorId = await embedAndUpsertTicket(ticket, source, documentVersion, namespace, blobVersionId);
+        const vectorId = await embedAndUpsertTicket(ticket, source, documentVersion, namespace, blobVersionId, embeddingDeployment);
         await markEmbedded(ticket.ticketId, vectorId);
         embedded++;
       } catch (err) {
@@ -179,6 +180,7 @@ export async function POST(request: NextRequest) {
       namespace,
       blobVersionId: blobVersionId ?? null,
       documentVersion,
+      embeddingDeployment: embeddingDeployment ?? (process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT ?? 'text-embedding-3-small'),
       errors: errors.slice(0, 10),
     });
   } catch (error) {

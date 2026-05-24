@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronDown,
   Bot,
+  BookOpen,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -20,6 +21,8 @@ export type SidebarTopic =
   | "chunking"
   | "graph-rag"
   | "agent-it"
+  | "agent-it-langgraph"
+  | "prompt-engineering"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -45,6 +48,16 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "security-agent",       label: "Agent Security", description: "Risks & Mitigations" },
     { id: "security-principles",  label: "AI Principles",  description: "Fairness, Safety, Privacy..." },
     { id: "security-owasp",       label: "OWASP Top 10",   description: "LLM Security Vulnerabilities" },
+  ],
+  "agent-it": [
+    { id: "agent-it-main",          label: "Tickets & Classify", description: "Classify tickets with vector similarity" },
+    { id: "agent-it-knowledgebase", label: "Knowledgebase",      description: "6 RAG versioning concepts" },
+  ],
+  "prompt-engineering": [
+    { id: "prompt-patterns",          label: "Prompt Patterns",          description: "Vanderbilt reusable prompt patterns" },
+    { id: "prompt-engineering-guide", label: "Prompt Engineering Guide",  description: "OpenAI strategies & best practices" },
+    { id: "smart-qa",                 label: "Smart Q&A Assistant",       description: "Role prompting & few-shot demo" },
+    { id: "context-engineering",      label: "Context Engineering",        description: "Anthropic guide for AI agents" },
   ],
   "vector-db": [
     { id: "vector-db-intro",          label: "Introduction",      description: "Problem, Solution & RAG Flow" },
@@ -85,6 +98,22 @@ const topics = [
     description: "Agent Integration & Tools",
     icon: Bot,
     color: "text-indigo-500",
+    hasSubItems: true,
+  },
+  {
+    id: "agent-it-langgraph",
+    label: "Agent IT (LangGraph)",
+    description: "Graph-based ticket routing",
+    icon: GitBranch,
+    color: "text-violet-500",
+  },
+  {
+    id: "prompt-engineering",
+    label: "Prompt & Context Engineering",
+    description: "Patterns & Best Practices",
+    icon: BookOpen,
+    color: "text-amber-500",
+    hasSubItems: true,
   },
 ] as const
 

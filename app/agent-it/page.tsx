@@ -81,6 +81,21 @@ type UploadResult = {
 
 const CATEGORIES = ['Infrastructure', 'Application', 'Security', 'Database', 'Storage', 'Network', 'Access Management'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
+
+const EVAL_PAIRS = [
+  {
+    question: 'The web server is running at 100% CPU and response times are degraded. What should I do?',
+    expectedAnswer: 'Provision additional resources or scale up the web server to resolve high CPU utilization.',
+  },
+  {
+    question: 'Users cannot connect to the database. Connection timeouts are occurring on production.',
+    expectedAnswer: 'Check for deadlocks and increase the maximum number of database connections to resolve timeout issues.',
+  },
+  {
+    question: 'An employee account was locked out after multiple failed login attempts. How do I resolve it?',
+    expectedAnswer: 'Enforce Multi-Factor Authentication on the account and review access logs for suspicious activity.',
+  },
+];
 const PAGE_SIZES = [10, 20, 50, 100];
 
 const PRIORITY_COLOR: Record<string, string> = {
@@ -201,6 +216,7 @@ export default function AgentITPage() {
   const [candidateNamespace, setCandidateNamespace] = useState('it-tickets-v2');
   const [seedMode, setSeedMode] = useState<'incremental' | 'full'>('full');
   const [blobSeedMode, setBlobSeedMode] = useState<'incremental' | 'full'>('incremental');
+  const [embeddingModel, setEmbeddingModel] = useState('text-embedding-3-small');
   const [candidateSeedLoading, setCandidateSeedLoading] = useState(false);
   const [candidateSeedResult, setCandidateSeedResult] = useState<SeedResult | null>(null);
   const [promoteLoading, setPromoteLoading] = useState(false);
@@ -208,11 +224,26 @@ export default function AgentITPage() {
   const [rollbackLoading, setRollbackLoading] = useState(false);
   const [rollbackResult, setRollbackResult] = useState<{ previousActive: string; newActive: string; promotedAt: string } | null>(null);
 
+  // Eval (#6) state
+  type EvalPairResult = {
+    question: string; expectedAnswer: string; actualAnswer: string;
+    correct: boolean; reason: string; latencyMs: number; topMatchScore: number;
+  };
+  type EvalResult = {
+    namespace: string; recall: number; accuracy: number;
+    avgLatencyMs: number; pairs: EvalPairResult[]; passed: boolean;
+  };
+  const [evalLoading, setEvalLoading] = useState(false);
+  const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
+  const [evalError, setEvalError] = useState('');
+
   // Versions / upload state
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [uploadError, setUploadError] = useState('');
+  const [currentBlobName, setCurrentBlobName] = useState('IT_Tickets_v1.xlsx');
+  const [availableBlobs, setAvailableBlobs] = useState<string[]>([]);
   const [blobVersions, setBlobVersions] = useState<BlobVersion[]>([]);
   const [versionsLoading, setVersionsLoading] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<BlobVersion | null>(null);
@@ -369,6 +400,26 @@ export default function AgentITPage() {
     }
   }
 
+  async function handleEval() {
+    setEvalLoading(true);
+    setEvalResult(null);
+    setEvalError('');
+    try {
+      const res = await fetch('/api/agent-it/eval', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ namespace: candidateNamespace.trim(), pairs: EVAL_PAIRS }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setEvalResult(data);
+    } catch (err) {
+      setEvalError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setEvalLoading(false);
+    }
+  }
+
   const loadBlobVersions = useCallback(async (blobName: string) => {
     setVersionsLoading(true);
     try {
@@ -380,9 +431,22 @@ export default function AgentITPage() {
     }
   }, []);
 
+  const loadAvailableBlobs = useCallback(async () => {
+    try {
+      const res = await fetch('/api/agent-it/blob/versions');
+      const data = await res.json();
+      if (res.ok && data.blobs?.length) setAvailableBlobs(data.blobs);
+    } catch {
+      // silently ignore — versions list is still usable
+    }
+  }, []);
+
   useEffect(() => {
-    if (activeTab === 'versions') loadBlobVersions('IT_Tickets_v1.xlsx');
-  }, [activeTab, loadBlobVersions]);
+    if (activeTab === 'versions') {
+      loadAvailableBlobs();
+      loadBlobVersions(currentBlobName);
+    }
+  }, [activeTab, loadBlobVersions, currentBlobName, loadAvailableBlobs]);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -397,8 +461,10 @@ export default function AgentITPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setUploadResult(data);
+      setCurrentBlobName(data.blobName);
       setBlobVersions(data.versions ?? []);
       setUploadFile(null);
+      loadAvailableBlobs();
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -418,6 +484,7 @@ export default function AgentITPage() {
           blobVersionId: version.versionId,
           documentVersion: `blob-${version.versionId.slice(0, 8)}`,
           mode: blobSeedMode,
+          embeddingDeployment: embeddingModel,
         }),
       });
       const data = await res.json();
@@ -1001,6 +1068,89 @@ export default function AgentITPage() {
               </div>
             )}
 
+            {/* ── Eval gate (#6) ── */}
+            <div className="border border-border rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Step 1.5 — Evaluate Before Promoting</div>
+                <button
+                  onClick={handleEval}
+                  disabled={evalLoading || !candidateNamespace.trim()}
+                  className="flex items-center gap-2 text-sm px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {evalLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                  {evalLoading ? 'Evaluating...' : 'Run Eval'}
+                </button>
+              </div>
+
+              {/* Hardcoded Q&A pairs preview */}
+              <div className="space-y-1">
+                {EVAL_PAIRS.map((p, i) => (
+                  <div key={i} className="text-xs text-muted-foreground border border-border/50 rounded px-3 py-1.5">
+                    <span className="font-medium text-foreground">Q{i + 1}:</span> {p.question}
+                  </div>
+                ))}
+              </div>
+
+              {evalError && (
+                <div className="text-xs text-red-600 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 px-3 py-2 rounded">{evalError}</div>
+              )}
+
+              {evalResult && (
+                <div className="space-y-3">
+                  {/* Summary banner */}
+                  <div className={`px-4 py-3 rounded border flex items-start gap-3 ${evalResult.passed ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800' : 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'}`}>
+                    {evalResult.passed
+                      ? <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      : <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />}
+                    <div className="space-y-1">
+                      <div className={`text-sm font-medium ${evalResult.passed ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'}`}>
+                        {evalResult.passed ? 'Eval passed — safe to promote' : 'Eval failed — re-ingest before promoting'}
+                      </div>
+                      <div className="flex gap-4 text-xs text-muted-foreground">
+                        <span>Recall: <strong>{(evalResult.recall * 100).toFixed(0)}%</strong></span>
+                        <span>Accuracy: <strong>{(evalResult.accuracy * 100).toFixed(0)}%</strong></span>
+                        <span>Avg latency: <strong>{evalResult.avgLatencyMs}ms</strong></span>
+                        <span>Namespace: <strong className="font-mono">{evalResult.namespace}</strong></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Per-pair results table */}
+                  <div className="border border-border rounded overflow-hidden">
+                    <table className="w-full text-xs">
+                      <thead className="bg-muted/50 border-b border-border">
+                        <tr>
+                          {['#', 'Question', 'Result', 'Latency', 'Judge Reason'].map(h => (
+                            <th key={h} className="text-left px-3 py-2 font-medium text-muted-foreground">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {evalResult.pairs.map((p, i) => (
+                          <tr key={i} className="border-b border-border/50 hover:bg-muted/30">
+                            <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
+                            <td className="px-3 py-2 max-w-xs">
+                              <div className="truncate" title={p.question}>{p.question}</div>
+                              <div className="text-muted-foreground mt-0.5 truncate" title={p.actualAnswer}>↳ {p.actualAnswer}</div>
+                            </td>
+                            <td className="px-3 py-2">
+                              {p.correct
+                                ? <CheckCircle className="h-4 w-4 text-green-500" />
+                                : <XCircle className="h-4 w-4 text-red-400" />}
+                            </td>
+                            <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{p.latencyMs}ms</td>
+                            <td className="px-3 py-2 text-muted-foreground max-w-xs">
+                              <span title={p.reason} className="line-clamp-2">{p.reason}</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Promote result */}
             {promoteResult && (
               <div className="text-xs px-3 py-2 rounded border bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 font-mono space-y-0.5">
@@ -1070,10 +1220,30 @@ export default function AgentITPage() {
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2 font-medium text-sm">
                 <History className="h-4 w-4 text-indigo-500" />
-                Version History — IT_Tickets_v1.xlsx
+                Version History —
+                {availableBlobs.length > 1 ? (
+                  <select
+                    value={currentBlobName}
+                    onChange={e => { setCurrentBlobName(e.target.value); loadBlobVersions(e.target.value); }}
+                    className="font-mono text-xs border border-border rounded px-2 py-0.5 bg-background"
+                  >
+                    {availableBlobs.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                ) : (
+                  <span className="font-mono text-xs">{currentBlobName}</span>
+                )}
               </div>
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-muted-foreground">Mode:</span>
+              <div className="flex items-center gap-3 text-xs flex-wrap">
+                <span className="text-muted-foreground">Embedding:</span>
+                <select
+                  value={embeddingModel}
+                  onChange={e => setEmbeddingModel(e.target.value)}
+                  className="font-mono text-xs border border-border rounded px-2 py-1 bg-background"
+                >
+                  <option value="text-embedding-3-small">text-embedding-3-small</option>
+                  <option value="text-embedding-3-large">text-embedding-3-large</option>
+                </select>
+                <span className="text-muted-foreground ml-2">Mode:</span>
                 {(['incremental', 'full'] as const).map(m => (
                   <label key={m} className="flex items-center gap-1 cursor-pointer">
                     <input
@@ -1088,7 +1258,7 @@ export default function AgentITPage() {
                   </label>
                 ))}
                 <button
-                  onClick={() => loadBlobVersions('IT_Tickets_v1.xlsx')}
+                  onClick={() => loadBlobVersions(currentBlobName)}
                   className="flex items-center gap-1 px-3 py-1.5 border border-border rounded hover:bg-accent"
                 >
                   <RefreshCw className="h-3 w-3" /> Refresh
