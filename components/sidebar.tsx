@@ -3,6 +3,7 @@
 import { useState } from "react"
 import {
   Shield,
+  ShieldCheck,
   Database,
   Scissors,
   GitBranch,
@@ -10,11 +11,13 @@ import {
   ChevronDown,
   Bot,
   BookOpen,
+  Bug,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export type SidebarTopic =
   | "security"
+  | "guardrails"
   | "vector-db"
   | "embeddings"
   | "chunking"
@@ -22,6 +25,7 @@ export type SidebarTopic =
   | "agent-it"
   | "agent-it-langgraph"
   | "prompt-engineering"
+  | "prompt-debugging"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -50,15 +54,11 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "security-owasp",       label: "OWASP Top 10",   description: "LLM Security Vulnerabilities" },
     { id: "career-advisor",       label: "Career Advisor AI", description: "End-to-end responsible AI demo" },
   ],
-  "agent-it": [
-    { id: "agent-it-main",          label: "Tickets & Classify", description: "Classify tickets with vector similarity" },
-    { id: "agent-it-knowledgebase", label: "Knowledgebase",      description: "6 RAG versioning concepts" },
-  ],
-  "prompt-engineering": [
-    { id: "prompt-patterns",          label: "Prompt Patterns",          description: "Vanderbilt reusable prompt patterns" },
-    { id: "prompt-engineering-guide", label: "Prompt Engineering Guide",  description: "OpenAI strategies & best practices" },
-    { id: "smart-qa",                 label: "Smart Q&A Assistant",       description: "Role prompting & few-shot demo" },
-    { id: "context-engineering",      label: "Context Engineering",        description: "Anthropic guide for AI agents" },
+  guardrails: [
+    { id: "guardrails-openai",       label: "OpenAI Moderation",   description: "Free harm-classification API" },
+    { id: "guardrails-ai",           label: "Guardrails AI",       description: "Validators, Guards & Hub" },
+    { id: "guardrails-nemo",         label: "NeMo Guardrails",     description: "Programmable rails (Colang)" },
+    { id: "guardrails-safe-chatbot", label: "Safe Chatbot (Project)", description: "Input/output filtering demo" },
   ],
   "agent-it": [
     { id: "agent-it-main",          label: "Tickets & Classify", description: "Classify tickets with vector similarity" },
@@ -77,6 +77,16 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "vector-db-rag-example-2",  label: "RAG Example 2",     description: "File Upload, @azure/openai" },
     { id: "vector-db-demo",           label: "Live Demo",          description: "Interactive RAG Walkthrough" },
   ],
+  chunking: [
+    { id: "chunking-strategies", label: "Chunking Strategies", description: "Fixed · Overlap · Structure · Semantic" },
+    { id: "chunking-hybrid",     label: "Hybrid Retrieval",    description: "BM25 + Dense + RRF (Qdrant)" },
+  ],
+  "prompt-debugging": [
+    { id: "prompt-debugging-overview", label: "Prompt Debugging",   description: "Diagnose & refine AI outputs (CodeStringers)" },
+    { id: "prompt-debugging-steps",    label: "5 Debugging Steps",  description: "Reproduce → Isolate → Refine → Evaluate (newline)" },
+    { id: "prompt-versioning",         label: "Prompt Versioning",  description: "Track, branch & roll back prompts (Agenta)" },
+    { id: "prompt-playground",         label: "Testing Playground", description: "Compare prompt versions & outputs (live)" },
+  ],
 }
 
 const topics = [
@@ -86,6 +96,14 @@ const topics = [
     description: "Guardrails & Safety",
     icon: Shield,
     color: "text-red-500",
+    hasSubItems: true,
+  },
+  {
+    id: "guardrails",
+    label: "Guardrails",
+    description: "LLM Safety Frameworks",
+    icon: ShieldCheck,
+    color: "text-teal-500",
     hasSubItems: true,
   },
   {
@@ -102,6 +120,7 @@ const topics = [
     description: "Text Segmentation",
     icon: Scissors,
     color: "text-green-500",
+    hasSubItems: true,
   },
   {
     id: "agent-it",
@@ -124,6 +143,14 @@ const topics = [
     description: "Patterns & Best Practices",
     icon: BookOpen,
     color: "text-amber-500",
+    hasSubItems: true,
+  },
+  {
+    id: "prompt-debugging",
+    label: "Prompt Debugging & Versioning",
+    description: "Diagnose, Refine & Track Prompts",
+    icon: Bug,
+    color: "text-rose-500",
     hasSubItems: true,
   },
 ] as const

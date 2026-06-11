@@ -4,18 +4,20 @@ import { Sidebar } from "@/components/sidebar"
 import { usePathname } from "next/navigation"
 import { handleNav } from "@/lib/navigate"
 
-export default function ChunkingLayout({ children }: { children: React.ReactNode }) {
+export default function GuardrailsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const getActiveSubsection = () => {
-    if (pathname.includes("/hybrid-retrieval")) return "chunking-hybrid"
-    return "chunking-strategies"
+    if (pathname.includes("/guardrails-ai")) return "guardrails-ai"
+    if (pathname.includes("/nemo")) return "guardrails-nemo"
+    if (pathname.includes("/safe-chatbot")) return "guardrails-safe-chatbot"
+    return "guardrails-openai"
   }
 
   return (
     <div className="flex min-h-svh bg-background">
       <Sidebar
-        activeSection="chunking"
+        activeSection="guardrails"
         activeSubsection={getActiveSubsection()}
         onSectionChange={handleNav}
       />

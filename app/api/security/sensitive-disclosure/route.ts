@@ -72,8 +72,6 @@ export async function POST(req: NextRequest) {
         },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 300,
-      temperature: 0.3,
     });
 
     const reply = response.choices[0]?.message?.content ?? '';

@@ -4,18 +4,20 @@ import { Sidebar } from "@/components/sidebar"
 import { usePathname } from "next/navigation"
 import { handleNav } from "@/lib/navigate"
 
-export default function ChunkingLayout({ children }: { children: React.ReactNode }) {
+export default function PromptDebuggingLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
 
   const getActiveSubsection = () => {
-    if (pathname.includes("/hybrid-retrieval")) return "chunking-hybrid"
-    return "chunking-strategies"
+    if (pathname.includes("/debugging-steps")) return "prompt-debugging-steps"
+    if (pathname.includes("/versioning")) return "prompt-versioning"
+    if (pathname.includes("/playground")) return "prompt-playground"
+    return "prompt-debugging-overview"
   }
 
   return (
     <div className="flex min-h-svh bg-background">
       <Sidebar
-        activeSection="chunking"
+        activeSection="prompt-debugging"
         activeSubsection={getActiveSubsection()}
         onSectionChange={handleNav}
       />

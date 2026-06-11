@@ -103,6 +103,11 @@ const contentSections = {
     subtitle: "OWASP Top 10 for LLMs & AI Principles",
     topics: [],
   },
+  guardrails: {
+    title: "Guardrails",
+    subtitle: "LLM Safety Frameworks: Moderation, Guardrails AI & NeMo",
+    topics: [],
+  },
   "vector-db": {
     title: "Vector Databases",
     subtitle: "Efficient Storage & Retrieval",
