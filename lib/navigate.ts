@@ -41,5 +41,9 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
     else if (subsection === "prompt-versioning") window.location.href = "/prompt-debugging/versioning"
     else if (subsection === "prompt-playground") window.location.href = "/prompt-debugging/playground"
     else window.location.href = "/prompt-debugging/debugging"
+  } else if (section === "mcp") {
+    if (subsection === "mcp-client") window.location.href = "/mcp/mcp-client"
+    else if (subsection === "mcp-architecture") window.location.href = "/mcp/mcp-architecture"
+    else window.location.href = "/mcp/mcp-server"
   }
 }

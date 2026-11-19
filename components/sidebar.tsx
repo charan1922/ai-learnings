@@ -12,6 +12,7 @@ import {
   Bot,
   BookOpen,
   Bug,
+  Plug,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +27,7 @@ export type SidebarTopic =
   | "agent-it-langgraph"
   | "prompt-engineering"
   | "prompt-debugging"
+  | "mcp"
 
 export type SecuritySubsection =
   | "security-intro"
@@ -86,6 +88,11 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "prompt-debugging-steps",    label: "5 Debugging Steps",  description: "Reproduce → Isolate → Refine → Evaluate (newline)" },
     { id: "prompt-versioning",         label: "Prompt Versioning",  description: "Track, branch & roll back prompts (Agenta)" },
     { id: "prompt-playground",         label: "Testing Playground", description: "Compare prompt versions & outputs (live)" },
+  ],
+  mcp: [
+    { id: "mcp-server", label: "MCP Server", description: "Tools, Resources & Prompts" },
+    { id: "mcp-client", label: "MCP Client", description: "Host, Elicitation & Form/URL Modes" },
+    { id: "mcp-architecture", label: "MCP Architecture", description: "Coming soon" },
   ],
 }
 
@@ -153,19 +160,32 @@ const topics = [
     color: "text-rose-500",
     hasSubItems: true,
   },
+  {
+    id: "mcp",
+    label: "MCP",
+    description: "Model Context Protocol",
+    icon: Plug,
+    color: "text-cyan-500",
+    hasSubItems: true,
+  },
 ] as const
 
 export function Sidebar({ activeSection, activeSubsection, onSectionChange }: SidebarProps) {
   const [expandedItem, setExpandedItem] = useState<string | null>(activeSection || null)
 
   return (
-    <aside className="w-64 border-r border-border bg-muted/40 p-6 sticky top-0 h-screen overflow-y-auto">
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold tracking-tight">AI/RAG Concepts</h2>
-        <p className="text-xs text-muted-foreground mt-1">Presentation & Learning Guide</p>
+    <aside className="w-56 shrink-0 border-r border-border bg-muted/30 sticky top-0 h-screen overflow-y-auto flex flex-col">
+      <div className="h-11 px-3 flex items-center gap-2 border-b border-border">
+        <div className="h-6 w-6 rounded bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold">
+          AI
+        </div>
+        <div className="min-w-0 leading-tight">
+          <div className="text-[13px] font-semibold truncate">AI/RAG Concepts</div>
+          <div className="text-[10px] text-muted-foreground truncate">Learning Guide</div>
+        </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="flex-1 py-2 px-1.5 space-y-px">
         {topics.map((topic) => {
           const Icon = topic.icon
           const isExpanded = expandedItem === topic.id
@@ -176,6 +196,7 @@ export function Sidebar({ activeSection, activeSubsection, onSectionChange }: Si
           return (
             <div key={topic.id}>
               <button
+                title={topic.description}
                 onClick={() => {
                   if (hasSubItems) {
                     setExpandedItem(isExpanded ? null : topic.id)
@@ -185,59 +206,48 @@ export function Sidebar({ activeSection, activeSubsection, onSectionChange }: Si
                   }
                 }}
                 className={cn(
-                  "w-full text-left px-4 py-3 rounded-lg transition-colors",
+                  "w-full h-8 px-2 flex items-center gap-2 rounded text-left text-[13px] transition-colors",
                   "hover:bg-accent hover:text-accent-foreground",
-                  (isExpanded && hasSubItems) || (isActive && !hasSubItems)
-                    ? "bg-accent text-accent-foreground"
-                    : ""
+                  isActive ? "font-semibold text-foreground" : "text-foreground/80",
+                  isActive && !hasSubItems && "bg-accent"
                 )}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Icon className={cn("h-5 w-5 flex-shrink-0", topic.color)} />
-                    <div className="min-w-0">
-                      <div className="font-medium text-sm">{topic.label}</div>
-                      <div className="text-xs text-muted-foreground">{topic.description}</div>
-                    </div>
-                  </div>
-                  {hasSubItems && (
-                    <div className="flex-shrink-0">
-                      {isExpanded
-                        ? <ChevronDown className="h-4 w-4 transition-transform" />
-                        : <ChevronRight className="h-4 w-4 transition-transform" />}
-                    </div>
-                  )}
-                </div>
+                <Icon className={cn("h-4 w-4 shrink-0", topic.color)} />
+                <span className="flex-1 truncate">{topic.label}</span>
+                {hasSubItems &&
+                  (isExpanded ? (
+                    <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  ))}
               </button>
 
               {hasSubItems && isExpanded && (
-                <div className="ml-4 mt-1 space-y-1 border-l border-border/50 pl-2">
-                  {items.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => onSectionChange?.(topic.id as SidebarTopic, item.id)}
-                      className={cn(
-                        "w-full text-left px-3 py-2 rounded text-sm transition-colors",
-                        "hover:bg-accent/50 hover:text-accent-foreground",
-                        activeSubsection === item.id && "bg-accent text-accent-foreground font-medium"
-                      )}
-                    >
-                      <div className="font-medium text-xs text-blue-600 dark:text-blue-400 mb-0.5">{item.label}</div>
-                      <div className="text-xs text-muted-foreground">{item.description}</div>
-                    </button>
-                  ))}
+                <div className="ml-[17px] my-0.5 border-l border-border">
+                  {items.map((item) => {
+                    const isSubActive = activeSubsection === item.id && isActive
+                    return (
+                      <button
+                        key={item.id}
+                        title={item.description}
+                        onClick={() => onSectionChange?.(topic.id as SidebarTopic, item.id)}
+                        className={cn(
+                          "w-full h-7 pl-3 pr-2 -ml-px flex items-center text-left text-[12.5px] border-l-2 transition-colors",
+                          isSubActive
+                            ? "border-primary bg-accent text-foreground font-medium"
+                            : "border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/60"
+                        )}
+                      >
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
           )
         })}
       </nav>
-
-      <div className="mt-8 pt-6 border-t border-border">
-        <p className="text-xs text-muted-foreground font-medium">
-          Use this sidebar to navigate through key concepts and explain each topic to your team.
-        </p>
-      </div>
     </aside>
   )
 }
