@@ -93,6 +93,7 @@ const subItems: Record<string, { id: string; label: string; description: string 
     { id: "mcp-server", label: "MCP Server", description: "Tools, Resources & Prompts" },
     { id: "mcp-client", label: "MCP Client", description: "Host, Elicitation & Form/URL Modes" },
     { id: "mcp-architecture", label: "MCP Architecture", description: "Layers, Transports & Discovery" },
+    { id: "mcp-live-demo", label: "Live Demo", description: "Hands-on MCP host, servers & protocol log" },
   ],
 }
 

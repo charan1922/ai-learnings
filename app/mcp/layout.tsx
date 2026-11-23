@@ -10,6 +10,7 @@ export default function McpLayout({ children }: { children: React.ReactNode }) {
   const getActiveSubsection = () => {
     if (pathname.includes("/mcp-client")) return "mcp-client"
     if (pathname.includes("/mcp-architecture")) return "mcp-architecture"
+    if (pathname.includes("/live-demo")) return "mcp-live-demo"
     return "mcp-server"
   }
 

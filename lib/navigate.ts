@@ -44,6 +44,7 @@ export function handleNav(section: SidebarTopic, subsection?: string) {
   } else if (section === "mcp") {
     if (subsection === "mcp-client") window.location.href = "/mcp/mcp-client"
     else if (subsection === "mcp-architecture") window.location.href = "/mcp/mcp-architecture"
+    else if (subsection === "mcp-live-demo") window.location.href = "/mcp/live-demo"
     else window.location.href = "/mcp/mcp-server"
   }
 }
