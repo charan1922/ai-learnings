@@ -308,8 +308,8 @@ export default function RagExample2Page() {
                         <span>📄 {String(src.metadata.source ?? 'unknown')}</span>
                         <span>Chunk {Number(src.metadata.chunkIndex ?? 0) + 1} / {String(src.metadata.totalChunks ?? '?')}</span>
                         <span>Score: {(Number(src.metadata.score ?? 0) * 100).toFixed(1)}%</span>
-                        {src.metadata.documentVersion && <span className="font-mono bg-muted px-1 rounded">v: {String(src.metadata.documentVersion)}</span>}
-                        {src.metadata.embeddingModel && <span className="font-mono bg-muted px-1 rounded">{String(src.metadata.embeddingModel)}</span>}
+                        {!!src.metadata.documentVersion && <span className="font-mono bg-muted px-1 rounded">v: {String(src.metadata.documentVersion)}</span>}
+                        {!!src.metadata.embeddingModel && <span className="font-mono bg-muted px-1 rounded">{String(src.metadata.embeddingModel)}</span>}
                       </div>
                       <p className="text-xs font-mono leading-relaxed text-foreground/80">{src.content}</p>
                     </div>

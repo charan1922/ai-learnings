@@ -260,7 +260,7 @@ export default function RagExamplePage() {
                         <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium">
                           Chunk {i + 1}
                         </span>
-                        {src.metadata.source && (
+                        {!!src.metadata.source && (
                           <span className="text-xs text-muted-foreground">
                             source: {String(src.metadata.source)}
                           </span>

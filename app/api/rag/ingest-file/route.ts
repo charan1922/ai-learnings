@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
           .filter((id): id is string => !!id);
 
         if (pageIds.length > 0) {
-          const fetched = await index.fetch(pageIds);
+          const fetched = await index.fetch({ ids: pageIds });
           for (const record of Object.values(fetched.records)) {
             if ((record.metadata as Record<string, unknown>)?.source === filename) {
               idsToDelete.push(record.id);
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       } while (paginationToken);
 
       if (idsToDelete.length > 0) {
-        await index.deleteMany(idsToDelete);
+        await index.deleteMany({ ids: idsToDelete });
       }
     }
 
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       } satisfies VersionedChunkMetadata,
     }));
 
-    await index.upsert(vectors);
+    await index.upsert({ records: vectors });
 
     return NextResponse.json({
       message: 'File ingested successfully',

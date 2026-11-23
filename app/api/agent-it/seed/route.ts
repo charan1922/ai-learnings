@@ -131,12 +131,12 @@ export async function POST(request: NextRequest) {
       // Fetch in batches of 100 to read metadata.source
       for (let i = 0; i < toDelete.length; i += 100) {
         const batch = toDelete.slice(i, i + 100);
-        const fetched = await index.fetch(batch);
+        const fetched = await index.fetch({ ids: batch });
         const staleIds = Object.entries(fetched.records ?? {})
           .filter(([, rec]) => (rec.metadata as Record<string, unknown>)?.source === blobName)
           .map(([id]) => id);
         if (staleIds.length > 0) {
-          await index.deleteMany(staleIds);
+          await index.deleteMany({ ids: staleIds });
           deletedVectors += staleIds.length;
         }
       }

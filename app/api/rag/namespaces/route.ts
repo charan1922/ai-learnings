@@ -46,7 +46,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Namespaces
           const list = await nsIndex.listPaginated({ limit: 1 });
           const ids = (list.vectors ?? []).map(v => v.id).filter((id): id is string => !!id);
           if (ids.length > 0) {
-            const fetched = await nsIndex.fetch(ids);
+            const fetched = await nsIndex.fetch({ ids });
             const record = Object.values(fetched.records)[0];
             if (record?.metadata) {
               const m = record.metadata as Record<string, unknown>;

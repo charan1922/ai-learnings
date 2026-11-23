@@ -85,11 +85,11 @@ export async function embedAndUpsertTicket(
   };
 
   const index = getPineconeIndex(targetNamespace);
-  await index.upsert([{
+  await index.upsert({ records: [{
     id: vectorId,
     values: vector,
     metadata: metadata as unknown as Record<string, string | number | boolean>,
-  }]);
+  }] });
 
   return vectorId;
 }

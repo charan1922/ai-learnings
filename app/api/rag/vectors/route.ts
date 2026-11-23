@@ -25,12 +25,12 @@ export async function GET(request: NextRequest) {
 
     for (let i = 0; i < ids.length; i += batchSize) {
       const batch = ids.slice(i, i + batchSize);
-      const fetched = await index.fetch(batch);
+      const fetched = await index.fetch({ ids: batch });
       for (const record of Object.values(fetched.records)) {
         allRecords.push({
           id: record.id,
-          valuesPreview: record.values.slice(0, 6),
-          totalDims: record.values.length,
+          valuesPreview: record.values?.slice(0, 6) ?? [],
+          totalDims: record.values?.length ?? 0,
           metadata: record.metadata,
         });
       }

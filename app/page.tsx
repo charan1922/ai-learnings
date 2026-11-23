@@ -158,6 +158,21 @@ const contentSections = {
     subtitle: "Same solution modelled as an explicit StateGraph",
     topics: [],
   },
+  "prompt-engineering": {
+    title: "Prompt Engineering",
+    subtitle: "Designing and refining prompts",
+    topics: [],
+  },
+  "prompt-debugging": {
+    title: "Prompt Debugging",
+    subtitle: "Reproduce, isolate, refine and evaluate prompts",
+    topics: [],
+  },
+  mcp: {
+    title: "Model Context Protocol",
+    subtitle: "Servers, Clients & Architecture",
+    topics: [],
+  },
 }
 
 export default function Page() {

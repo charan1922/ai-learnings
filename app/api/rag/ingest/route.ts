@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       },
     }));
 
-    await index.upsert(vectors);
+    await index.upsert({ records: vectors });
 
     return NextResponse.json({ message: 'Document ingested successfully', chunks: chunks.length });
   } catch (error) {
