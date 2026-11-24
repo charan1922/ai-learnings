@@ -178,10 +178,12 @@ the page calls `POST /api/mcp-demo/admin` with `{ "server": "<name>", "action": 
   start ONE of each pair, then use Copilot Chat in agent mode. Booking shows VS Code's own form (elicitation).
   - `travel` (HTTP) — needs `pnpm dev`; same data as the page, and the page's buttons notify VS Code.
   - `travel (stdio)` — VS Code starts `pnpm --dir <workspace> mcp:stdio travel` itself; a separate process.
-- **MCP Inspector:** `pnpm mcp:inspect` opens the web UI (<http://localhost:6274>; use the session token it
-  prints) → Streamable HTTP → `http://localhost:6060/api/mcp/travel`.
-  CLI with the ready-made [inspector.json](./inspector.json) (`travel` = modern, `travel-2025` = legacy, `travel-stdio`):
-  `pnpm mcp:inspect:cli --server travel --method tools/list`
+- **MCP Inspector** (installed in the project, pinned 2.16.0), using [inspector.json](./inspector.json):
+  - `pnpm mcp:inspect` — the web UI (<http://localhost:6274>; open the link with the token it prints).
+    Our servers are listed read-only: `travel` (modern 2026-07-28), `travel-2025` (legacy), `travel-stdio`.
+    Toggle one on, then Tools / Prompts / Resources. `bookVacation` shows the elicitation form (MRTR, 2 rounds).
+  - `pnpm mcp:inspect:cli --server travel --method tools/list` — the same from the terminal
+    (the CLI cannot show forms, so `bookVacation` is refused there — correctly).
 - **Other hosts:** connect to `http://localhost:6060/api/mcp/travel` (Streamable HTTP).
 - **stdio:** `pnpm mcp:stdio travel`, then send JSON-RPC lines on stdin.
 

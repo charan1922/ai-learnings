@@ -1,4 +1,6 @@
 allowBuilds:
+  # Its postinstall only installs clients in a source checkout and no-ops as a dependency.
+  '@modelcontextprotocol/inspector': false
   esbuild: true
   msw: true
   protobufjs: true
