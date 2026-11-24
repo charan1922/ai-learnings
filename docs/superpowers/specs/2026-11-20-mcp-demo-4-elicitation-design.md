@@ -1,6 +1,6 @@
 # MCP Demo — Spec 4: Elicitation (Form Mode, MRTR, URL Mode)
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `elicitation`
 
 ## Goal
@@ -70,3 +70,10 @@ Make the MCP Client lesson real: the Travel Server asks the user for input mid-b
 
 - The modern client auto-fulfills `input_required` through registered handlers, so the handler must be able to await the dialog. Check timeouts and raise them for URL mode.
 - If the SDK reuses the id on request 2, document what it actually does.
+
+## Build notes (2026-11-23)
+
+- The SDK uses a new id on request 2 (A id=0, B id=1) and echoes `requestState` byte-for-byte.
+- `requestState` from `createRequestStateCodec` is HMAC-signed, not encrypted (readable base64 JSON). Tampering → `-32602 Invalid or expired requestState`.
+- Form-only / no capability: the server itself refuses with "the request's client capabilities do not declare the required capability" (HTTP 400).
+- Elicitation is declared from the first connect via the new `UiFeature.capabilities`; the client refuses to register the handler without the capability, so `clientSetup` guards it.

@@ -94,6 +94,9 @@ export function ProtocolLog() {
                     </span>
                     <span className="font-mono text-muted-foreground w-20 truncate">{e.server}</span>
                     <span className="font-mono">{summary(e.json)}</span>
+                    {e.transport === 'stdio' && (
+                      <span className="px-1.5 rounded bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200 text-[10px]">stdio</span>
+                    )}
                     {e.httpStatus && <span className="ml-auto text-muted-foreground">HTTP {e.httpStatus}</span>}
                   </summary>
                   <div className="p-2 space-y-2">

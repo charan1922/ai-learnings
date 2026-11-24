@@ -1,6 +1,6 @@
 # MCP Demo — Spec 9: Claude Agent SDK as a Second Host
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `agent-host`
 
 ## Goal
@@ -57,3 +57,15 @@ Nothing below that depends on these details is final until they're confirmed.
 
 - Agent SDK runtime constraints (a spawned process, a long-lived stream) inside a Next.js route handler. If they don't fit, run it as a small `tsx` script that writes NDJSON, and have the route spawn it the same way Spec 6's stdio bridge does.
 - Cost: each run uses real tokens. Bound the turns and show usage per run.
+
+## Build notes (2026-11-23)
+
+Step 0 findings (docs + installed `@anthropic-ai/claude-agent-sdk` 0.3.330 types):
+
+- `query({ prompt, options })` yields `system/init` (`mcp_servers`, `tools`), `assistant` (`message.content` text / tool_use), `user` (tool_result), `result` (`subtype`, `num_turns`, `total_cost_usd`, `usage`). It throws after an error result.
+- HTTP MCP servers: `mcpServers: { travel: { type: 'http', url } }`; tool names are `mcp__<server>__<tool>`; `allowedTools` accepts `mcp__travel__*`.
+- Lockdown used: `tools: []` (no built-ins), `allowedTools` for our servers, a `disallowedTools` deny list, `permissionMode: 'dontAsk'`, `settingSources: []`, `strictMcpConfig`, an isolated `CLAUDE_CONFIG_DIR`/`cwd`, `ENABLE_CLAUDEAI_MCP_SERVERS=false`. The route refuses to run without `ANTHROPIC_API_KEY` so it never uses a personal login.
+- Elicitation: `onElicitation(request)`; this host records the request and answers `decline`.
+- Runtime: spawns its bundled native Claude Code binary; added to `serverExternalPackages`. Works on Windows from Node.
+- Verified with a deliberately invalid key (no cost): all three servers `connected` in 1.9 s, and the agent's tool list was only our 7 MCP tools. The server log shows `claude-code/2.1.330 (agent-sdk)` speaking **2026-07-28**: `server/discover`, `subscriptions/listen`, `tools/list`, `resources/list`, `prompts/list`.
+- **Open:** checkpoints 1–4 with a real run need `ANTHROPIC_API_KEY` in `.env`.

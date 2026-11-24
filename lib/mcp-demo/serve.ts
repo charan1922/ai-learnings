@@ -1,11 +1,13 @@
 import {
   hostHeaderValidationResponse,
+  isLegacyRequest,
   localhostAllowedHostnames,
   localhostAllowedOrigins,
   originValidationResponse,
 } from '@modelcontextprotocol/server'
 
-import { getHandler } from './handlers'
+import { getHandler, notifier } from './handlers'
+import { serveLegacy } from './legacy-sessions'
 import { isServerName } from './server-info'
 import { appendServerLog } from './server-log'
 
@@ -23,7 +25,8 @@ export function guardLocalhost(request: Request): Response | undefined {
 
 /**
  * The single entry point for /api/mcp/[server]:
- * check the server name → guard → log the request → hand it to the handler → log the response.
+ * check the server name → guard → log the request → serve it → log the response.
+ * Modern (2026-07-28) requests go to the stateless handler; 2025-era hosts (VS Code…) get a session.
  */
 export async function serveMcp(server: string, request: Request): Promise<Response> {
   if (!isServerName(server)) {
@@ -34,7 +37,9 @@ export async function serveMcp(server: string, request: Request): Promise<Respon
   if (rejected) return rejected
 
   await logInbound(server, request)
-  const response = await getHandler(server).fetch(request)
+  const response = (await isLegacyRequest(request))
+    ? await serveLegacy(server, request, notifier)
+    : await getHandler(server).fetch(request)
   await logOutbound(server, response)
   return response
 }

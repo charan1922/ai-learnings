@@ -1,6 +1,6 @@
 # MCP Demo — Spec 1: Foundation (shared base)
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: nothing · **Every other spec depends only on this one.**
 
 ## Goal
@@ -120,3 +120,11 @@ Each server factory builds `new McpServer(info, mergedOptions)` and calls every 
 
 - No Next.js recipe exists in the docs. If `handler.fetch` can't run in a route handler, stop and redesign.
 - If notifications can't reach listen streams with cached stateless handlers, Specs 2 and 5 fall back to "poll after admin action". Record that in both specs.
+
+## Build notes (2026-11-23)
+
+- No unit tests and no smoke runner (the user asked for none); verified with typecheck, scripted clients and the running app.
+- Dev port is 6060 (6666 is blocked by browsers). Route handlers use no `runtime`/`dynamic` exports and type params with `RouteContext`.
+- `host.ts` guards against stale connects (React dev mode connect → disconnect → connect).
+- Later specs added two contract fields: `UiFeature.capabilities` (Spec 4) and `HostClient.sessionId` + polite `terminateSession()` (Spec 7).
+- Lint stays blocked: ESLint does not support TypeScript 7 yet.

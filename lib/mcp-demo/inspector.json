@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "travel": { "type": "http", "url": "http://localhost:6060/api/mcp/travel", "protocolEra": "modern" },
+    "weather": { "type": "http", "url": "http://localhost:6060/api/mcp/weather", "protocolEra": "modern" },
+    "calendar": { "type": "http", "url": "http://localhost:6060/api/mcp/calendar", "protocolEra": "modern" },
+
+    "travel-2025": { "type": "http", "url": "http://localhost:6060/api/mcp/travel", "protocolEra": "legacy" },
+    "calendar-2025": { "type": "http", "url": "http://localhost:6060/api/mcp/calendar", "protocolEra": "legacy" },
+
+    "travel-stdio": { "type": "stdio", "command": "pnpm", "args": ["mcp:stdio", "travel"] }
+  }
+}

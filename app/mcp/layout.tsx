@@ -22,7 +22,8 @@ export default function McpLayout({ children }: { children: React.ReactNode }) {
         onSectionChange={handleNav}
       />
       <main className="flex-1 overflow-auto">
-        <div className="p-8 max-w-4xl">{children}</div>
+        {/* The Live Demo has a chat column on the right, so it gets the full width; lesson pages stay narrow for reading. */}
+        <div className={pathname.includes("/live-demo") ? "p-6" : "p-8 max-w-4xl"}>{children}</div>
       </main>
     </div>
   )

@@ -1,0 +1,14 @@
+{
+  // Streamable HTTP: needs `pnpm dev` running. Shares data with the Live Demo page (same server).
+  // stdio: VS Code starts the server itself. A separate process — its own bookings, and the page's buttons can't reach it.
+  // Start only one of each pair (e.g. "travel" OR "travel (stdio)"), or the model sees every tool twice.
+  "servers": {
+    "travel": { "type": "http", "url": "http://localhost:6060/api/mcp/travel" },
+    "weather": { "type": "http", "url": "http://localhost:6060/api/mcp/weather" },
+    "calendar": { "type": "http", "url": "http://localhost:6060/api/mcp/calendar" },
+
+    "travel (stdio)": { "type": "stdio", "command": "pnpm", "args": ["--dir", "${workspaceFolder}", "mcp:stdio", "travel"] },
+    "weather (stdio)": { "type": "stdio", "command": "pnpm", "args": ["--dir", "${workspaceFolder}", "mcp:stdio", "weather"] },
+    "calendar (stdio)": { "type": "stdio", "command": "pnpm", "args": ["--dir", "${workspaceFolder}", "mcp:stdio", "calendar"] }
+  }
+}

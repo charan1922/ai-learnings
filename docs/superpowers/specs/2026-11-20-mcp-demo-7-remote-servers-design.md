@@ -1,6 +1,6 @@
 # MCP Demo — Spec 7: Remote MCP Servers
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `remotes`
 
 ## Goal
@@ -56,3 +56,8 @@ Don't hard-code tool names. Use `tools/list` at runtime.
 ## Risks
 
 Third-party availability, rate limits and auth changes. Re-probe before demos.
+
+## Build notes (2026-11-23)
+
+- Re-probed 2026-11-23: all five up and as in the table. Microsoft Learn's session id is readable even from a direct browser connection.
+- Disconnect ends a legacy session with `terminateSession()` before `close()` (done in `host.ts`, so every host row gets it).

@@ -1,6 +1,6 @@
 # MCP Demo — Spec 2: Resources, Templates, Prompts and Completion
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `resources-prompts`
 
 ## Goal
@@ -44,3 +44,8 @@ Cover the read-side features of the MCP Server lesson: resources, resource templ
 4. Typing "Bar" suggests Barcelona, and the log shows `completion/complete`.
 5. Add meeting makes `resources/updated` arrive, and the re-read shows the meeting. (If Foundation recorded the polling fallback, a re-read after the action is acceptable.)
 6. Smoke checks pass. Lint and type check are clean.
+
+## Build notes (2026-11-23)
+
+- Completion is generic: every prompt argument and every template placeholder (`ref/resource`, with context), asked only while the field has focus.
+- No smoke runner. All checkpoints passed in the browser; all Spec 2 checklist items tick.

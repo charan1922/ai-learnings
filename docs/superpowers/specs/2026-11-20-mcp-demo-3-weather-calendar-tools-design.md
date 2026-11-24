@@ -1,6 +1,6 @@
 # MCP Demo — Spec 3: Weather and Calendar/Email Tools
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `trip-tools`
 
 ## Goal
@@ -33,3 +33,8 @@ Give the Weather and Calendar/Email servers their tools: one backed by a real pu
 1. `checkWeather` for Barcelona returns real numbers, and an unknown city returns an `isError` result.
 2. `createCalendarEvent` and `sendEmail` from the Tools tab show up in the Trip services panel.
 3. Smoke checks pass. Lint and type check are clean.
+
+## Build notes (2026-11-23)
+
+- Added read-only `calendar://created-events` and `email://outbox` resources so the Trip services panel reads them over MCP; it re-reads after every finished Calendar `tools/call`.
+- Open-Meteo works with plain Node `fetch`; `lib/ipv4-fetch.ts` was not needed.

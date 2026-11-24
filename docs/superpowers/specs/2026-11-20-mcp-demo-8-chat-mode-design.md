@@ -1,6 +1,6 @@
 # MCP Demo — Spec 8: Chat Mode (Barcelona Trip with the Claude API SDK)
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `chat`
 
 ## Goal
@@ -69,3 +69,9 @@ Chat mode is **independent**: it discovers whatever prompts, resources and tools
 ## Out of scope
 
 Streaming tokens, multiple conversations, persistence.
+
+## Build notes (2026-11-23)
+
+- Requests stream under the hood (`.stream(...).finalMessage()`) instead of a plain non-streaming call; `$schema` is stripped from tool input schemas.
+- Verified without a key: the chat loop against the real servers with scripted Claude replies (prompt from `prompts/get`, 3 context resources, identical tools array every round, thinking blocks kept, all results in one message, `isError` → `is_error`), and the no-credentials path (503 + disabled panel).
+- **Open:** checkpoints 1–3 with real Claude need `ANTHROPIC_API_KEY` in `.env`.

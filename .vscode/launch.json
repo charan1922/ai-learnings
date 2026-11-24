@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev --inspect",
+      "cwd": "${workspaceFolder}",
+      // null = drop any copy VS Code inherited, so Next.js reads the key from .env
+      "env": { "MIMO_API_KEY": null }
+    }
+  ]
+}

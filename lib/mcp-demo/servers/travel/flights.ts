@@ -1,23 +1,21 @@
 import type { McpServer } from '@modelcontextprotocol/server'
 import * as z from 'zod/v4'
 
-import type { ServerFeature } from '../types'
+/**
+ * Flights: `searchFlights`.
+ * MCP concepts: a tool with inputSchema + outputSchema, returning `structuredContent` (MCP Server lesson).
+ */
 
 type Flight = { flightNumber: string; price: number }
 
 /** Mock flight data using the lesson's values. Keys are "origin->destination", lowercase. */
 const FLIGHTS: Record<string, Flight[]> = {
   'new york->barcelona': [{ flightNumber: 'EX101', price: 640 }],
+  // The lesson books EX102 as the return flight; it gives no price, so it mirrors EX101.
+  'barcelona->new york': [{ flightNumber: 'EX102', price: 640 }],
 }
 
-/** Base feature (Spec 1): the `searchFlights` tool on the Travel server. */
-export const baseFeature: ServerFeature = {
-  id: 'base',
-  register: { travel: registerSearchFlights },
-}
-
-/** Registers the `searchFlights` tool from the MCP Server lesson. */
-function registerSearchFlights(server: McpServer): void {
+export function registerFlights(server: McpServer): void {
   server.registerTool(
     'searchFlights',
     {

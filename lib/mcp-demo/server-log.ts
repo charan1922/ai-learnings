@@ -21,6 +21,8 @@ export interface ServerLogEntry {
   status?: number
   contentType?: string
   body?: unknown
+  /** A server-side error the MCP handler reported (it answers the client with a generic -32603). */
+  error?: string
 }
 
 type Store = { nextId: number; entries: ServerLogEntry[] }

@@ -95,7 +95,7 @@ export function WatchResourcePanel({ clients }: PanelProps) {
     const res = await fetch('/api/mcp-demo/admin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ feature: 'resources-prompts', action: 'add-meeting' }),
+      body: JSON.stringify({ server: 'calendar', action: 'add-meeting' }),
     })
     if (!res.ok) return setError(`Add meeting failed: HTTP ${res.status}`)
     // When watching, the notification line above tells the story. When not, nothing will arrive.

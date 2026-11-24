@@ -1,6 +1,6 @@
 # MCP Demo — Spec 6: stdio Transport (Data Layer vs Transport Layer)
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `stdio`
 
 ## Goal
@@ -35,3 +35,8 @@ Show the Architecture lesson's main point: the **same message** (`tools/list`) o
 - Spawning `tsx` from a route handler on Windows. If `npx` resolution fails, use `process.execPath` with `--import tsx`.
 - Verify the v2 `Transport` interface before wrapping it.
 - Path aliases (`@/…`) under `tsx`. Use relative imports in the entry script if needed.
+
+## Build notes (2026-11-23)
+
+- On Windows the bridge spawns `process.execPath --import tsx scripts/mcp-stdio.ts <server>` (no shell); about 2 s per run including start-up.
+- `pnpm mcp:stdio travel` keeps stdout clean (pnpm's banner goes to stderr), so it works as a VS Code / Inspector stdio command.

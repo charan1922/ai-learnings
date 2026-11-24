@@ -28,6 +28,8 @@ export interface HostClient {
   era?: ReturnType<Client['getProtocolEra']>
   serverVersion?: ReturnType<Client['getServerVersion']>
   capabilities?: ReturnType<Client['getServerCapabilities']>
+  /** Mcp-Session-Id — only legacy-era (2025) servers hand one out. */
+  sessionId?: string
   error?: string
 }
 
@@ -84,6 +86,13 @@ export function createHost(options: HostOptions = {}): HostApi {
   }
   const closeQuietly = async (client: Client | undefined) => {
     try {
+      // A legacy session is ended politely first (HTTP DELETE with Mcp-Session-Id), then the client closes.
+      const transport = client?.transport
+      if (transport instanceof StreamableHTTPClientTransport && transport.sessionId) await transport.terminateSession()
+    } catch {
+      // The server may not support ending sessions — closing below is enough.
+    }
+    try {
       await client?.close()
     } catch {
       // Already closed.
@@ -105,7 +114,8 @@ export function createHost(options: HostOptions = {}): HostApi {
 
       const fetchImpl = options.fetchFor?.(target) ?? createLoggingFetch(target.id)
       try {
-        await client.connect(new StreamableHTTPClientTransport(new URL(target.url, pageOrigin()), { fetch: fetchImpl }))
+        const transport = new StreamableHTTPClientTransport(new URL(target.url, pageOrigin()), { fetch: fetchImpl })
+        await client.connect(transport)
         if (attempts.get(target.id) !== attempt) return void (await closeQuietly(client))
         update(target.id, {
           status: 'connected',
@@ -113,6 +123,7 @@ export function createHost(options: HostOptions = {}): HostApi {
           era: client.getProtocolEra(),
           serverVersion: client.getServerVersion(),
           capabilities: client.getServerCapabilities(),
+          sessionId: transport.sessionId,
           error: undefined,
         })
       } catch (error) {
@@ -123,7 +134,7 @@ export function createHost(options: HostOptions = {}): HostApi {
     async disconnect(id) {
       nextAttempt(id)
       await closeQuietly(clients.get(id)?.client)
-      update(id, { status: 'disconnected', client: undefined })
+      update(id, { status: 'disconnected', client: undefined, sessionId: undefined })
     },
     async reconnect(id) {
       const current = clients.get(id)

@@ -1,6 +1,6 @@
 # MCP Demo — Spec 5: Discovery, Stateless Requests and Tool-List Changes
 
-Date: 2026-11-20 · Status: Draft · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
+Date: 2026-11-20 · Status: Built 2026-11-23 · Parent: [MCP Live Demo overview](2026-11-20-mcp-live-demo-design.md)
 Depends on: [Spec 1 Foundation](2026-11-20-mcp-demo-1-foundation-design.md) only · Feature id: `discovery`
 
 ## Goal
@@ -33,3 +33,8 @@ Cover the MCP Architecture lesson's protocol topics: discovery, stateless reques
 3. Listen, then Add searchHotels: the feed shows acknowledged, then `list_changed`, then a separate `tools/list` that includes `searchHotels`.
 4. The missed-update flow works.
 5. Smoke checks pass. Lint and type check are clean.
+
+## Build notes (2026-11-23)
+
+- The SDK's subscription id looks like `listen:0`. Discover's cache hint on our servers: `ttlMs 0, cacheScope private`.
+- The lesson's stateless `tools/call` works exactly as written (no `clientInfo`), and gets a plain JSON reply.

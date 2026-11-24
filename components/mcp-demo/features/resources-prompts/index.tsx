@@ -12,5 +12,5 @@ export const resourcesPromptsUi: UiFeature = {
     { id: 'templates', label: 'Templates', Component: TemplatesTab },
     { id: 'prompts', label: 'Prompts', Component: PromptsTab },
   ],
-  panels: [{ id: 'watch-resource', label: 'Watch a resource', Component: WatchResourcePanel }],
+  panels: [{ id: 'watch-resource', label: 'Watch a resource', section: 'server', Component: WatchResourcePanel }],
 }

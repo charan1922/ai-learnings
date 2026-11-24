@@ -7,7 +7,7 @@ import type { LogEntry } from '@/lib/mcp-demo/log-store'
 import { useLogEntries } from '../../use-host'
 import type { PanelProps } from '../types'
 
-// Same URIs as lib/mcp-demo/features/trip-tools/server.ts (not imported: that file is server code).
+// Same URIs as lib/mcp-demo/servers/calendar/events.ts and email.ts (not imported: those are server code).
 const CREATED_EVENTS_URI = 'calendar://created-events'
 const OUTBOX_URI = 'email://outbox'
 
